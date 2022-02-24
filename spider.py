@@ -21,7 +21,7 @@ try:
   
     
     
-    system    = platform.system() # system-- pega o nome da 
+    system    = platform.system() # system- teste de actualização do comit 
     release   = platform.release()
     version   = platform.version()
     arquitect = platform.machine()
