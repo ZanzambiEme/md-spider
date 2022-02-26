@@ -7,18 +7,24 @@ from pandas import describe_option
 
 
 try:
+    
     import os
-    import json
+    import json  
+    
     import random
+    import logging
     import platform
     import argparse
     import core.colors as color
+    from core.utils import logginStore
   
-    
+    # Web spider Banner 
     from core.banner import WELCOME_BANNER 
     print('\t'+color.green+random.choice(WELCOME_BANNER).center(10)+color.end)
     
-  
+    logginStore()
+    
+    logging.info('[Start on -{} ]'. format(platform.platform()))
     
     
     system    = platform.system() # system- teste de actualização do comit 
@@ -28,6 +34,7 @@ try:
     
     sys_info = {'platform':{'system':system, 'release':release, 'version':version, 'machine':arquitect}}
     json_dic = {}
+    
     ''' 
    try:
         with  open('./logs/logs.json', 'a+') as logs_json:
@@ -78,10 +85,13 @@ try:
          http_polution    = args.http
          
          if verbose:
-             print("Mostar os processos a executar")
+            print("Mostar os processos a executar")
+            logging.info('Escolheu o modo verbose')
          
     except AssertionError as e:
-        print('erro na passagem de argumentos')
-    
+        print(color.red,'Erro na passagem de argumentos', color.end)
+        logging.error('Error parsing parameters {} '.format(e))
 except ImportError as e:
-    print ("erron na importação de bibliotecas")
+    print ("Erro na importação do módulo %s". format(e))
+    logging.error('Import Module Error {} '.format(e))
+    
