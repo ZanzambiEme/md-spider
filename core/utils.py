@@ -12,3 +12,10 @@ def logginStore():
     except ImportError as e:
         print(color.bad+' erro em importar % '.format(e))
         
+def urlValidator(url):
+    if 'http://' in url[:7]:
+        return True
+    elif 'https://' in url[:8]:
+        return True
+    else:
+        return False

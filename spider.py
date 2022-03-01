@@ -1,9 +1,15 @@
 # !/usr/bin/env python3
 
-from email import parser
+from doctest import ELLIPSIS_MARKER
+from email import parser, utils
+from pprint import pprint
+from dataclasses_json import config
 from matplotlib.pyplot import title
 
 from pandas import describe_option
+from sqlalchemy import true
+
+from core.config import ACTION_VALIDATE
 
 
 try:
@@ -15,6 +21,8 @@ try:
     import logging
     import platform
     import argparse
+    import core.utils as utilsfucntions
+    import core.config
     import core.colors as color
     from core.utils import logginStore
   
@@ -89,6 +97,46 @@ try:
          sh_injection     = args.sh
          maa_attack       = args.maa
          
+         if target_url:
+            if(utilsfucntions.urlValidator(target_url) == True):
+                if html_injection:
+                    print
+                    ACTION_VALIDATE = True
+                if iframe_injection:
+                    print
+                    ACTION_VALIDATE = True
+                if sql_injection:
+                    print
+                    ACTION_VALIDATE = True
+                if os_injection:
+                    print
+                    ACTION_VALIDATE = True
+                if xss_attack:
+                    print ("xss")
+                    ACTION_VALIDATE = True
+                if http_polution:
+                    print
+                    ACTION_VALIDATE = True
+                if sh_injection:
+                    print ("Ataque de sessão")
+                    ACTION_VALIDATE = True
+                if maa_attack:
+                    print ("Atribuição em massa")
+                    ACTION_VALIDATE = True
+                    
+                if ACTION_VALIDATE == False:
+                    print('Sem modo de ação, passado')
+                    print('\n' + parser.format_help().lower())
+                    logging.error("Sem modo de Ação")
+                    quit()
+            else: 
+                print("Alvo desconhecido")
+                logging.error("Alvo desconhecido")
+                quit()
+         else:
+            print("sem alvos") ## Organizar a apresentação das sms
+            logging.error("[Sem alvo]")
+            quit()
          if verbose:
             print("Mostar os processos a executar")
             logging.info('Escolheu o modo verbose')
