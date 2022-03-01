@@ -58,15 +58,18 @@ try:
     Injection = parse.add_argument_group(title='Injeções')
     Injection.add_argument('-html', help='injeção html',action='store_true',dest='html')
     Injection.add_argument('-iframe', help='injeção  iframe', action='store_true', dest='iframe')
+    Injection.add_argument('-sh', help='Injeção de sessão', action='store_true', dest='sh')
     Injection.add_argument('-sql', help='injeção sql', action='store_true', dest='sql')
+  
     Injection.add_argument('-os', help='injeção  os', action='store_true', dest='os')
     
     xss = parse.add_argument_group( title='Cross-Site Scripting (XSS)')
     xss.add_argument('-xss',help='Cross-Site Srcipting (xss)', action='store_true', dest='xss')
         
     other = parse.add_argument_group( title='Outras Vulnerabilidades...')
-    other.add_argument('-http',help='Poluição dos Parâmetros HTTP', action='store_true',
-    dest='http')
+    
+    other.add_argument('-http',help='Poluição dos Parâmetros HTTP', action='store_true',dest='http')
+    other.add_argument('-maa', help='Ataque de Atribuição em Massa ', action='store_true', dest='maa')
     
     try:
          args    = parse.parse_args()
@@ -83,6 +86,8 @@ try:
          os_injection     = args.os
          xss_attack       = args.xss
          http_polution    = args.http
+         sh_injection     = args.sh
+         maa_attack       = args.maa
          
          if verbose:
             print("Mostar os processos a executar")
