@@ -17,5 +17,7 @@ def urlValidator(url):
         return True
     elif 'https://' in url[:8]:
         return True
+    if 'www' in url[:3]:
+        return True
     else:
         return False

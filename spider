@@ -1,18 +1,11 @@
 # !/usr/bin/env python3
 
-from doctest import ELLIPSIS_MARKER
-from email import parser, utils
-from pprint import pprint
-from dataclasses_json import config
-from matplotlib.pyplot import title
-
-from pandas import describe_option
-from sqlalchemy import true
-
-from core.config import ACTION_VALIDATE
 
 
 try:
+
+    from core.config import ACTION_VALIDATE
+
     
     import os
     import json  
@@ -125,23 +118,24 @@ try:
                     ACTION_VALIDATE = True
                     
                 if ACTION_VALIDATE == False:
-                    print('Sem modo de ação, passado')
-                    print('\n' + parser.format_help().lower())
+                    print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Modo de Ação não detectado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver os modos a usar com o spider")
                     logging.error("Sem modo de Ação")
                     quit()
             else: 
-                print("Alvo desconhecido")
+                print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+"Alvo não detectado, Verifique se há um erro de digitação em "+color.red+target_url+color.end+color.orange+", ou execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider")
+                
                 logging.error("Alvo desconhecido")
+                
                 quit()
          else:
-            print("sem alvos") ## Organizar a apresentação das sms
+            print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Sem alvo passado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider") ## Organizar a apresentação das sms
             logging.error("[Sem alvo]")
             quit()
          if verbose:
             print("Mostar os processos a executar")
             logging.info('Escolheu o modo verbose')    
     except AssertionError as e:
-        print(color.red,'Erro na passagem de argumentos', color.end)
+        print(color.red+'Erro na passagem de argumentos'+ color.end)
         logging.error('Error parsing parameters {} '.format(e))
 except ImportError as e:
     print ("Erro na importação do módulo %s". format(e))
