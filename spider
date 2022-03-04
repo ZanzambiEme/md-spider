@@ -1,10 +1,18 @@
 # !/usr/bin/env python3
 
+from doctest import ELLIPSIS_MARKER
+from email import parser, utils
+from pprint import pprint
+from dataclasses_json import config
+from matplotlib.pyplot import title
+
+from pandas import describe_option
+from sqlalchemy import true
+
+from core.config import ACTION_VALIDATE
+
 
 try:
-    from email import parser, utils
-    from core.config import ACTION_VALIDATE
-
     
     import os
     import json  
@@ -18,6 +26,7 @@ try:
     import core.colors as color
     from core.utils import logginStore
   
+    # Web spider Banner 
     from core.banner import WELCOME_BANNER 
     print('\t'+color.green+random.choice(WELCOME_BANNER).center(10)+color.end)
     
@@ -26,7 +35,7 @@ try:
     logging.info('[Start on -{} ]'. format(platform.platform()))
     
     
-    system    = platform.system()
+    system    = platform.system() # system- teste de actualização do comit 
     release   = platform.release()
     version   = platform.version()
     arquitect = platform.machine()
@@ -125,7 +134,7 @@ try:
                 logging.error("Alvo desconhecido")
                 quit()
          else:
-            print(color.falta+ color.red+"Sem para o  parâmetro -u "+color.end) ## Organizar a apresentação das sms
+            print("sem alvos") ## Organizar a apresentação das sms
             logging.error("[Sem alvo]")
             quit()
          if verbose:
