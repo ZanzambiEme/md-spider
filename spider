@@ -1,18 +1,10 @@
 # !/usr/bin/env python3
 
-from doctest import ELLIPSIS_MARKER
-from email import parser, utils
-from pprint import pprint
-from dataclasses_json import config
-from matplotlib.pyplot import title
-
-from pandas import describe_option
-from sqlalchemy import true
-
-from core.config import ACTION_VALIDATE
-
 
 try:
+    from email import parser, utils
+    from core.config import ACTION_VALIDATE
+
     
     import os
     import json  
@@ -26,7 +18,6 @@ try:
     import core.colors as color
     from core.utils import logginStore
   
-    # Web spider Banner 
     from core.banner import WELCOME_BANNER 
     print('\t'+color.green+random.choice(WELCOME_BANNER).center(10)+color.end)
     
@@ -35,7 +26,7 @@ try:
     logging.info('[Start on -{} ]'. format(platform.platform()))
     
     
-    system    = platform.system() # system- teste de actualização do comit 
+    system    = platform.system()
     release   = platform.release()
     version   = platform.version()
     arquitect = platform.machine()
@@ -52,7 +43,7 @@ try:
         print('Arquivo não encontrado')  #desabilitado por enquanto.... NOTA BEM!
     '''
     
-    parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider.py', epilog='CopyRight Spider Developers')
+    parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider', epilog='CopyRight Spider Developers')
     
     parse.add_argument('-t', metavar='', help='Tempo de Requisição http', type=float) 
     parse.add_argument('-w', metavar='', help='payload(wordlist)', dest='payload')
@@ -139,12 +130,10 @@ try:
             quit()
          if verbose:
             print("Mostar os processos a executar")
-            logging.info('Escolheu o modo verbose')
-         
+            logging.info('Escolheu o modo verbose')    
     except AssertionError as e:
         print(color.red,'Erro na passagem de argumentos', color.end)
         logging.error('Error parsing parameters {} '.format(e))
 except ImportError as e:
     print ("Erro na importação do módulo %s". format(e))
     logging.error('Import Module Error {} '.format(e))
-    
