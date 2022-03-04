@@ -125,7 +125,7 @@ try:
                 logging.error("Alvo desconhecido")
                 quit()
          else:
-            print("sem alvos") ## Organizar a apresentação das sms
+            print(color.falta+ color.red+"Sem para o  parâmetro -u "+color.end) ## Organizar a apresentação das sms
             logging.error("[Sem alvo]")
             quit()
          if verbose:
