@@ -14,10 +14,14 @@ try:
     import logging
     import platform
     import argparse
-    import core.utils as utilsfucntions
+    
+    
     import core.config
     import core.colors as color
+    import core.utils as utilsfucntions
     from core.utils import logginStore
+    
+    from mode.xss import xssStrike
   
     # Web spider Banner 
     from core.banner import WELCOME_BANNER 
@@ -105,7 +109,7 @@ try:
                     print
                     ACTION_VALIDATE = True
                 if xss_attack:
-                    print ("xss")
+                    xssStrike(target_url, timeout, verbose)
                     ACTION_VALIDATE = True
                 if http_polution:
                     print
