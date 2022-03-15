@@ -1,12 +1,11 @@
 # !/usr/bin/env python3
-
+from matplotlib.pyplot import title
 
 
 try:
 
     from core.config import ACTION_VALIDATE
 
-    
     import os
     import json  
     
@@ -52,29 +51,26 @@ try:
     parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider', epilog='CopyRight Spider Developers')
     
     parse.add_argument('-t', metavar='', help='Tempo de Requisição http', type=float) 
-    parse.add_argument('-w', metavar='', help='payload(wordlist)', dest='payload')
-    parse.add_argument('-log', help='Mostrar aquivos de log do Web Spider', action='store_true')
-    parse.add_argument('-p',   help = 'Porta do servidor', type = int, default=443, metavar='')
+    parse.add_argument('-d', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
+    parse.add_argument('-c', metavar='', help='Cookies http a serem usados (eg: PHPSESSID=a8d127e...)')
     parse.add_argument('-v',   help='Verbose', action='store_true') 
     
+    
     required_argument = parse.add_argument_group(title='Argumentos obrigatórios')
-    required_argument.add_argument('-u', metavar='', help='alvo em formato url', dest='target')
+    required_argument.add_argument('-u', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1-pra alvos injeção sql', dest='target')
     
     Injection = parse.add_argument_group(title='Injeções')
     Injection.add_argument('-html', help='injeção html',action='store_true',dest='html')
     Injection.add_argument('-iframe', help='injeção  iframe', action='store_true', dest='iframe')
     Injection.add_argument('-sh', help='Injeção de sessão', action='store_true', dest='sh')
     Injection.add_argument('-sql', help='injeção sql', action='store_true', dest='sql')
-  
     Injection.add_argument('-os', help='injeção  os', action='store_true', dest='os')
-    
-    xss = parse.add_argument_group( title='Cross-Site Scripting (XSS)')
-    xss.add_argument('-xss',help='Cross-Site Srcipting (xss)', action='store_true', dest='xss')
+    Injection.add_argument('-xss',help='Cross-Site Srcipting (xss)', action='store_true', dest='xss')
         
     other = parse.add_argument_group( title='Outras Vulnerabilidades...')
     
     other.add_argument('-http',help='Poluição dos Parâmetros HTTP', action='store_true',dest='http')
-    other.add_argument('-maa', help='Ataque de Atribuição em Massa ', action='store_true', dest='maa')
+    other.add_argument('-ma', help='Ataque de Atribuição em Massa ', action='store_true', dest='maa')
     
     try:
          args    = parse.parse_args()
@@ -82,7 +78,6 @@ try:
          payload  = args.payload
          timeout  = args.t
          verbose  = args.v
-         logfiles = args.log
          
          target_url       = args.target
          html_injection   = args.html
@@ -92,7 +87,7 @@ try:
          xss_attack       = args.xss
          http_polution    = args.http
          sh_injection     = args.sh
-         maa_attack       = args.maa
+         ma_attack       = args.maa
          
          if target_url:
             if(utilsfucntions.urlValidator(target_url) == True):
@@ -117,7 +112,7 @@ try:
                 if sh_injection:
                     print ("Ataque de sessão")
                     ACTION_VALIDATE = True
-                if maa_attack:
+                if ma_attack:
                     print ("Atribuição em massa")
                     ACTION_VALIDATE = True
                     
@@ -126,21 +121,18 @@ try:
                     logging.error("Sem modo de Ação")
                     quit()
             else: 
-                print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+"Alvo não detectado, Verifique se há um erro de digitação em "+color.red+target_url+color.end+color.orange+", ou execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider")
-                
+                print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Alvo não detectado, Verifique se há um erro de digitação em "+color.red+target_url+color.end+color.orange+", ou execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider")
                 logging.error("Alvo desconhecido")
-                
                 quit()
          else:
             print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Sem alvo passado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider") ## Organizar a apresentação das sms
             logging.error("[Sem alvo]")
             quit()
-         if verbose:
-            print("Mostar os processos a executar")
-            logging.info('Escolheu o modo verbose')    
-    except AssertionError as e:
-        print(color.red+'Erro na passagem de argumentos'+ color.end)
-        logging.error('Error parsing parameters {} '.format(e))
+    except AttributeError as e:
+       print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não conseguiu processar a atribuição dos argumentos... saindo..."+color.red)
+       logging.error('Error parsing parameters')
 except ImportError as e:
-    print ("Erro na importação do módulo %s". format(e))
-    logging.error('Import Module Error {} '.format(e))
+    print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não consegue importar um ou mais módulos ... saindo..")
+    logging.error('Import Module Error')
+    
+    ##Estilizar as mensagens de erro do menu Principal

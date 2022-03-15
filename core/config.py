@@ -6,6 +6,9 @@ from http.client import REQUEST_TIMEOUT
 
 ACTION_VALIDATE  = False
 REQUEST_TIMEOUT  = 10
+INPUTS_NUBERS = 0
+TARGET_VULNERABLE = False
+
 
 HEADERS = {  # default headers
     'User-Agent': '$',
@@ -16,3 +19,6 @@ HEADERS = {  # default headers
     'DNT': '1',
     'Upgrade-Insecure-Requests': '1',
     }
+
+PROXIES_ = {'http': 'http://217.219.61.6:8080', 'https': 'https://217.219.61.6:8080'}#  Fonte de servidor proxy usado configurado  https://spys.one/en/
+
