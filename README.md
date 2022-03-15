@@ -80,6 +80,8 @@ CopyRight Spider Developers
 
             python3 spider -t 5 -u https://alvo.com/pagina-que-desejas -v >> arquivo-texto.txt
 
+            --- fazer o comit
+
 #### injeção sql
 
 

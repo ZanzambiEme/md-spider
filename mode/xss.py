@@ -35,7 +35,7 @@ try:
         
         print("["+color.green+"!"+color.end+"]"+color.end+" Modo de"+color.orange+" deteção xss"+ color.end+" passada para o alvo "+color.orange+url+color.end)
         try:
-            first_request = requests.get(url=url, timeout=request_timeout, headers=header)#proxies=proxy....
+            first_request = requests.get(url=url, timeout=request_timeout, headers=header)#proxies=proxy.... desabilitado por enquanto
             first_request_parsed = BeautifulSoup(first_request.content, "html.parser") 
             print("["+color.green+"+"+color.end+"] Identificando campos pra inserção de dados...") 
             form_tag = first_request_parsed.find_all('form')

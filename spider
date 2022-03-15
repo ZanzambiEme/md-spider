@@ -1,4 +1,5 @@
 # !/usr/bin/env python3
+from curses import meta
 from matplotlib.pyplot import title
 
 
@@ -50,14 +51,24 @@ try:
     
     parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider', epilog='CopyRight Spider Developers')
     
-    parse.add_argument('-t', metavar='', help='Tempo de Requisição http', type=float) 
-    parse.add_argument('-d', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
-    parse.add_argument('-c', metavar='', help='Cookies http a serem usados (eg: PHPSESSID=a8d127e...)')
-    parse.add_argument('-v',   help='Verbose', action='store_true') 
-    
-    
     required_argument = parse.add_argument_group(title='Argumentos obrigatórios')
     required_argument.add_argument('-u', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1-pra alvos injeção sql', dest='target')
+    
+    parse.add_argument('-t', metavar='', help='Tempo de Requisição http', type=float) 
+    parse.add_argument('-d', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
+    parse.add_argument('-v', help='Verbose, mostra processos em background', action='store_true') 
+    parse.add_argument('-pN', metavar='', help='Nome de plugin a ser explorado a busca de falhas', dest='pluginName')
+    
+    parse.add_argument('--jquery', help='Verificar por potenciais falhas na versão do jquery', action='store_true')
+    parse.add_argument('--wordpress', help='Verificar po vulnerabilidades em plugins Wordpress, trabalha em combinação com a flag -pN', action='store_true')
+    parse.add_argument('--laravel', metavar='', help='Verificar por vulnerabilidades em versão Laravel no alvo')
+    parse.add_argument('--nodeJs', help='Verificar por vulnerabilidades na versão nodeJs no alvo passado', action='store_true')
+    parse.add_argument('--proxy', metavar='', help='Servidor proxy (eg: --proxy 0.0.0.0:8080)', dest='proxy-server')
+    parse.add_argument('--cookie', metavar='', help='Cookies http a serem usados (eg: PHPSESSID=a8d127e...)')
+    
+    ## Falta inicializar os novos parâmetros que passei no código
+    
+    
     
     Injection = parse.add_argument_group(title='Injeções')
     Injection.add_argument('-html', help='injeção html',action='store_true',dest='html')
@@ -70,7 +81,7 @@ try:
     other = parse.add_argument_group( title='Outras Vulnerabilidades...')
     
     other.add_argument('-http',help='Poluição dos Parâmetros HTTP', action='store_true',dest='http')
-    other.add_argument('-ma', help='Ataque de Atribuição em Massa ', action='store_true', dest='maa')
+    other.add_argument('-ma', help='Ataque de Atribuição em Massa ', action='store_true', dest='ma')
     
     try:
          args    = parse.parse_args()
@@ -78,6 +89,7 @@ try:
          payload  = args.payload
          timeout  = args.t
          verbose  = args.v
+        ## Falta inicializar os novos parâmetros que passei no código
          
          target_url       = args.target
          html_injection   = args.html
@@ -87,7 +99,7 @@ try:
          xss_attack       = args.xss
          http_polution    = args.http
          sh_injection     = args.sh
-         ma_attack       = args.maa
+         ma_attack       = args.ma
          
          if target_url:
             if(utilsfucntions.urlValidator(target_url) == True):
