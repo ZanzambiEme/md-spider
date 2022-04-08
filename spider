@@ -1,150 +1,156 @@
-# !/usr/bin/env python3
-from curses import meta
-from matplotlib.pyplot import title
-
-
+    # !/usr/bin/env python3
 try:
+    from curses import meta
+    from matplotlib.pyplot import title
 
-    from core.config import ACTION_VALIDATE
 
-    import os
-    import json  
-    
-    import random
-    import logging
-    import platform
-    import argparse
-    
-    
-    import core.config
-    import core.colors as color
-    import core.utils as utilsfucntions
-    from core.utils import logginStore
-    
-    from mode.xss import xssStrike
-  
-    # Web spider Banner 
-    from core.banner import WELCOME_BANNER 
-    print('\t'+color.green+random.choice(WELCOME_BANNER).center(10)+color.end)
-    
-    logginStore()
-    
-    logging.info('[Start on -{} ]'. format(platform.platform()))
-    
-    
-    system    = platform.system() # system- teste de actualização do comit 
-    release   = platform.release()
-    version   = platform.version()
-    arquitect = platform.machine()
-    
-    sys_info = {'platform':{'system':system, 'release':release, 'version':version, 'machine':arquitect}}
-    json_dic = {}
-    
-    ''' 
-   try:
-        with  open('./logs/logs.json', 'a+') as logs_json:
-            js = json.dumps([sys_info, json_dic], separators=(',', ':') , sort_keys=True, indent=4)
-            logs_json.write(js)
-    except FileNotFoundError as e:
-        print('Arquivo não encontrado')  #desabilitado por enquanto.... NOTA BEM!
-    '''
-    
-    parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider', epilog='CopyRight Spider Developers')
-    
-    required_argument = parse.add_argument_group(title='Argumentos obrigatórios')
-    required_argument.add_argument('-u', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1-pra alvos injeção sql', dest='target')
-    
-    parse.add_argument('-t', metavar='', help='Tempo de Requisição http', type=float) 
-    parse.add_argument('-d', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
-    parse.add_argument('-v', help='Verbose, mostra processos em background', action='store_true') 
-    parse.add_argument('-pN', metavar='', help='Nome de plugin a ser explorado a busca de falhas', dest='pluginName')
-    
-    parse.add_argument('--jquery', help='Verificar por potenciais falhas na versão do jquery', action='store_true')
-    parse.add_argument('--wordpress', help='Verificar po vulnerabilidades em plugins Wordpress, trabalha em combinação com a flag -pN', action='store_true')
-    parse.add_argument('--laravel', metavar='', help='Verificar por vulnerabilidades em versão Laravel no alvo')
-    parse.add_argument('--nodeJs', help='Verificar por vulnerabilidades na versão nodeJs no alvo passado', action='store_true')
-    parse.add_argument('--proxy', metavar='', help='Servidor proxy (eg: --proxy 0.0.0.0:8080)', dest='proxy-server')
-    parse.add_argument('--cookie', metavar='', help='Cookies http a serem usados (eg: PHPSESSID=a8d127e...)')
-    
-    ## Falta inicializar os novos parâmetros que passei no código
-    
-    
-    
-    Injection = parse.add_argument_group(title='Injeções')
-    Injection.add_argument('-html', help='injeção html',action='store_true',dest='html')
-    Injection.add_argument('-iframe', help='injeção  iframe', action='store_true', dest='iframe')
-    Injection.add_argument('-sh', help='Injeção de sessão', action='store_true', dest='sh')
-    Injection.add_argument('-sql', help='injeção sql', action='store_true', dest='sql')
-    Injection.add_argument('-os', help='injeção  os', action='store_true', dest='os')
-    Injection.add_argument('-xss',help='Cross-Site Srcipting (xss)', action='store_true', dest='xss')
-        
-    other = parse.add_argument_group( title='Outras Vulnerabilidades...')
-    
-    other.add_argument('-http',help='Poluição dos Parâmetros HTTP', action='store_true',dest='http')
-    other.add_argument('-ma', help='Ataque de Atribuição em Massa ', action='store_true', dest='ma')
-    
     try:
-         args    = parse.parse_args()
-         
-         payload  = args.payload
-         timeout  = args.t
-         verbose  = args.v
-        ## Falta inicializar os novos parâmetros que passei no código
-         
-         target_url       = args.target
-         html_injection   = args.html
-         iframe_injection = args.iframe
-         sql_injection    = args.sql
-         os_injection     = args.os
-         xss_attack       = args.xss
-         http_polution    = args.http
-         sh_injection     = args.sh
-         ma_attack       = args.ma
-         
-         if target_url:
-            if(utilsfucntions.urlValidator(target_url) == True):
-                if html_injection:
-                    print
-                    ACTION_VALIDATE = True
-                if iframe_injection:
-                    print
-                    ACTION_VALIDATE = True
-                if sql_injection:
-                    print
-                    ACTION_VALIDATE = True
-                if os_injection:
-                    print
-                    ACTION_VALIDATE = True
-                if xss_attack:
-                    xssStrike(target_url, timeout, verbose)
-                    ACTION_VALIDATE = True
-                if http_polution:
-                    print
-                    ACTION_VALIDATE = True
-                if sh_injection:
-                    print ("Ataque de sessão")
-                    ACTION_VALIDATE = True
-                if ma_attack:
-                    print ("Atribuição em massa")
-                    ACTION_VALIDATE = True
-                    
-                if ACTION_VALIDATE == False:
-                    print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Modo de Ação não detectado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver os modos a usar com o spider")
-                    logging.error("Sem modo de Ação")
-                    quit()
-            else: 
-                print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Alvo não detectado, Verifique se há um erro de digitação em "+color.red+target_url+color.end+color.orange+", ou execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider")
-                logging.error("Alvo desconhecido")
-                quit()
-         else:
-            print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Sem alvo passado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider") ## Organizar a apresentação das sms
-            logging.error("[Sem alvo]")
-            quit()
-    except AttributeError as e:
-       print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não conseguiu processar a atribuição dos argumentos... saindo..."+color.red)
-       logging.error('Error parsing parameters')
-except ImportError as e:
-    print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não consegue importar um ou mais módulos ... saindo..")
-    logging.error('Import Module Error')
+
+        from core.config import ACTION_VALIDATE
+
+        import os
+        import json  
+        
+        import random
+        import logging
+        import platform
+        import argparse
+        
+        
+        import core.config
+        import core.colors as color
+        import core.utils as utilsfucntions
+        from core.utils import logginStore
+        
+        ##action mode import
+        from mode.xss import xssStrike
+        
+        #from mode.sql import sql
+        
     
-    ##Estilizar as mensagens de erro do menu Principal
+        # Web spider Banner 
+        from core.banner import WELCOME_BANNER 
+        print('\t'+color.green+random.choice(WELCOME_BANNER).center(10)+color.end)
+        
+        logginStore()
+        
+        logging.info('[Start on -{} ]'. format(platform.platform()))
+        
+        
+        system    = platform.system() # system- teste de actualização do comit 
+        release   = platform.release()
+        version   = platform.version()
+        arquitect = platform.machine()
+        
+        sys_info = {'platform':{'system':system, 'release':release, 'version':version, 'machine':arquitect}}
+        json_dic = {}
+        
+        ''' ##desabilitado por enquanto
+    try:
+            with  open('./logs/logs.json', 'a+') as logs_json:
+                js = json.dumps([sys_info, json_dic], separators=(',', ':') , sort_keys=True, indent=4)
+                logs_json.write(js)
+        except FileNotFoundError as e:
+            print('Arquivo não encontrado')  #desabilitado por enquanto.... NOTA BEM!
+        '''
+        
+        parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider', epilog='CopyRight Spider Developers')
+        
+        required_argument = parse.add_argument_group(title='Argumentos obrigatórios')
+        required_argument.add_argument('-u', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1-pra alvos injeção sql', dest='target')
+        
+        parse.add_argument('-t', metavar='', help='Tempo de Requisição http', type=float) 
+        parse.add_argument('-d', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
+        parse.add_argument('-v', help='Verbose, mostra processos em background', action='store_true') 
+        parse.add_argument('-pN', metavar='', help='Nome de plugin a ser explorado a busca de falhas', dest='pluginName')
+        
+        parse.add_argument('--jquery', help='Verificar por potenciais falhas na versão do jquery', action='store_true')
+        parse.add_argument('--wordpress', help='Verificar po vulnerabilidades em plugins Wordpress, trabalha em combinação com a flag -pN', action='store_true')
+        parse.add_argument('--laravel', metavar='', help='Verificar por vulnerabilidades em versão Laravel no alvo')
+        parse.add_argument('--nodeJs', help='Verificar por vulnerabilidades na versão nodeJs no alvo passado', action='store_true')
+        parse.add_argument('--proxy', metavar='', help='Servidor proxy (eg: --proxy 0.0.0.0:8080)', dest='proxy-server')
+        parse.add_argument('--cookie', metavar='', help='Cookies http a serem usados (eg: PHPSESSID=a8d127e...)')
+        
+        ## Falta inicializar os novos parâmetros que passei no código
+        
+        
+        
+        Injection = parse.add_argument_group(title='Injeções')
+        Injection.add_argument('-html', help='injeção html',action='store_true',dest='html')
+        Injection.add_argument('-iframe', help='injeção  iframe', action='store_true', dest='iframe')
+        Injection.add_argument('-sh', help='Injeção de sessão', action='store_true', dest='sh')
+        Injection.add_argument('-sql', help='injeção sql', action='store_true', dest='sql')
+        Injection.add_argument('-os', help='injeção  os', action='store_true', dest='os')
+        Injection.add_argument('-xss',help='Cross-Site Srcipting (xss)', action='store_true', dest='xss')
+            
+        other = parse.add_argument_group( title='Outras Vulnerabilidades...')
+        
+        other.add_argument('-http',help='Poluição dos Parâmetros HTTP', action='store_true',dest='http')
+        other.add_argument('-ma', help='Ataque de Atribuição em Massa ', action='store_true', dest='ma')
+        
+        try:
+            args    = parse.parse_args()
+            
+            payload  = args.payload
+            timeout  = args.t
+            verbose  = args.v
+            ## Falta inicializar os novos parâmetros que passei no código
+            
+            target_url       = args.target
+            html_injection   = args.html
+            iframe_injection = args.iframe
+            sql_injection    = args.sql
+            os_injection     = args.os
+            xss_attack       = args.xss
+            http_polution    = args.http
+            sh_injection     = args.sh
+            ma_attack       = args.ma
+            
+            if target_url:
+                if(utilsfucntions.urlValidator(target_url) == True):
+                    if html_injection:
+                        print
+                        ACTION_VALIDATE = True
+                    if iframe_injection:
+                        print
+                        ACTION_VALIDATE = True
+                    if sql_injection:
+                    #   sql(target_url)                    
+                        ACTION_VALIDATE = True
+                    if os_injection:
+                        print
+                        ACTION_VALIDATE = True
+                    if xss_attack:
+                        xssStrike(target_url, timeout, verbose)
+                        ACTION_VALIDATE = True
+                    if http_polution:
+                        print
+                        ACTION_VALIDATE = True
+                    if sh_injection:
+                        print ("Ataque de sessão")
+                        ACTION_VALIDATE = True
+                    if ma_attack:
+                        print ("Atribuição em massa")
+                        ACTION_VALIDATE = True
+                        
+                    if ACTION_VALIDATE == False:
+                        print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Modo de Ação não detectado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver os modos a usar com o spider")
+                        logging.error("Sem modo de Ação")
+                        quit()
+                else: 
+                    print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Falha na Resolução de DNS, Verifique se há um erro de digitação em "+color.red+target_url+color.end+color.end)
+                    logging.error("Alvo desconhecido")
+                    quit()
+            else:
+                print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Sem alvo passado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider") ## Organizar a apresentação das sms
+                logging.error("[Sem alvo]")
+                quit()
+        except AttributeError as e:
+            print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não conseguiu processar a atribuição dos argumentos... saindo..."+color.red)
+            logging.error('Error parsing parameters')
+    except ImportError as e:
+        print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não consegue importar um ou mais módulos ... saindo..")
+        logging.error('Import Module Error')
+except KeyboardInterrupt as e:
+    print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"Interrupção"+color.orange+" pela parte do usuário"+color.red+" Saindo..."+color.end)
+    quit()       
