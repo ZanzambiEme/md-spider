@@ -30,7 +30,7 @@ try:
         quit()
 
         
-    def xssStrike(url, timeout, verbose):
+    def _xss(url, timeout, verbose):
         try:
             
             request_timeout = config.REQUEST_TIMEOUT

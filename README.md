@@ -83,7 +83,8 @@ CopyRight Spider Developers
             --- fazer o comit
 
 #### injeção sql
-
+  Notas sobre algumas ferramentas de injeção sql.
+  Sqlmap: só testa inputs dos formularios na na posição 0 do array do formulários, nesse caso, se o alvo tiver mais de um formulário, ele só testará o formulário que estiver no topo
 
 
 

@@ -22,11 +22,9 @@ try:
         import core.utils as utilsfucntions
         from core.utils import logginStore
         
-        ##action mode import
-        from mode.xss import xssStrike
-        
-        #from mode.sql import sql
-        
+        ## importação de modos de ação
+        from mode.xss import _xss
+        from mode.sql import _sqlInjection
     
         # Web spider Banner 
         from core.banner import WELCOME_BANNER 
@@ -37,7 +35,7 @@ try:
         logging.info('[Start on -{} ]'. format(platform.platform()))
         
         
-        system    = platform.system() # system- teste de actualização do comit 
+        system    = platform.system () 
         release   = platform.release()
         version   = platform.version()
         arquitect = platform.machine()
@@ -56,24 +54,18 @@ try:
         
         parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider', epilog='CopyRight Spider Developers')
         
-        required_argument = parse.add_argument_group(title='Argumentos obrigatórios')
-        required_argument.add_argument('-u', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1-pra alvos injeção sql', dest='target')
-        
+        parse.add_argument('-u', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1- para alvos injeção sql', dest='target') 
         parse.add_argument('-t', metavar='', help='Tempo de Requisição http', type=float) 
         parse.add_argument('-d', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
         parse.add_argument('-v', help='Verbose, mostra processos em background', action='store_true') 
-        parse.add_argument('-pN', metavar='', help='Nome de plugin a ser explorado a busca de falhas', dest='pluginName')
         
-        parse.add_argument('--jquery', help='Verificar por potenciais falhas na versão do jquery', action='store_true')
-        parse.add_argument('--wordpress', help='Verificar po vulnerabilidades em plugins Wordpress, trabalha em combinação com a flag -pN', action='store_true')
-        parse.add_argument('--laravel', metavar='', help='Verificar por vulnerabilidades em versão Laravel no alvo')
-        parse.add_argument('--nodeJs', help='Verificar por vulnerabilidades na versão nodeJs no alvo passado', action='store_true')
-        parse.add_argument('--proxy', metavar='', help='Servidor proxy (eg: --proxy 0.0.0.0:8080)', dest='proxy-server')
-        parse.add_argument('--cookie', metavar='', help='Cookies http a serem usados (eg: PHPSESSID=a8d127e...)')
-        
-        ## Falta inicializar os novos parâmetros que passei no código
-        
-        
+        parse.add_argument('-pN', metavar='', help='Nome de plugin a ser explorado a busca de falhas', dest='plugin_name')
+        parse.add_argument('--jquery', help='Verificar por potenciais falhas na versão do jquery', action='store_true', dest='jquery')
+        parse.add_argument('--wordpress', help='Verificar versões vulneráveis do plugins Wordpress, trabalha em combinação com a flag -pN', action='store_true', dest='wordpress')
+        parse.add_argument('--laravel', help='Verificar versões vulneráveis no Laravel no alvo', action='store_true', dest='laravel')
+        parse.add_argument('--nodeJs', help='Verificar versões vulneráveis no Laravel no alvo nodeJs no alvo passado', action='store_true', dest='nodejs')
+        parse.add_argument('--proxy', metavar='', help='Servidor proxy (eg: --proxy 0.0.0.0:8080)', dest='proxy_server')
+        parse.add_argument('--cookie', metavar='', help='Cookies http a serem usados (eg: PHPSESSID=a8d127e...)', dest='cookie')
         
         Injection = parse.add_argument_group(title='Injeções')
         Injection.add_argument('-html', help='injeção html',action='store_true',dest='html')
@@ -91,62 +83,81 @@ try:
         try:
             args    = parse.parse_args()
             
-            payload  = args.payload
-            timeout  = args.t
-            verbose  = args.v
-            ## Falta inicializar os novos parâmetros que passei no código
+            PAYLOADS  = args.payload
+            TIMOUT  = args.t
+            VERBOSE  = args.v
             
-            target_url       = args.target
-            html_injection   = args.html
-            iframe_injection = args.iframe
-            sql_injection    = args.sql
-            os_injection     = args.os
-            xss_attack       = args.xss
-            http_polution    = args.http
-            sh_injection     = args.sh
-            ma_attack       = args.ma
+            TARGET_URL       = args.target
+            HTML_INJECTION   = args.html
+            IFRAME_INJECTION = args.iframe
+            SQL_INJECTION    = args.sql
+            OS_INJECTION     = args.os
+            XSS              = args.xss
+            HTTP_POLUITION   = args.http
+            SH_INJECTION     = args.sh
+            MASS_ACTACK      = args.ma
             
-            if target_url:
-                if(utilsfucntions.urlValidator(target_url) == True):
-                    if html_injection:
+            ## algumas tecnologias com vulnerabilidades conhecida
+            PLUGIN_NAME = args.plugin_name
+            JQUERY      = args.jquery
+            WORDPRESS   = args.wordpress
+            LARAVEL     = args.laravel
+            NODEJS      = args.nodejs
+        
+            
+            if TARGET_URL:
+                if(utilsfucntions.urlValidator(TARGET_URL) == True):
+                    if HTML_INJECTION:
                         print
                         ACTION_VALIDATE = True
-                    if iframe_injection:
+                    if IFRAME_INJECTION:
                         print
                         ACTION_VALIDATE = True
-                    if sql_injection:
-                    #   sql(target_url)                    
+                    if SQL_INJECTION:
+                        _sqlInjection(TARGET_URL)                    
                         ACTION_VALIDATE = True
-                    if os_injection:
+                    if OS_INJECTION:
                         print
                         ACTION_VALIDATE = True
-                    if xss_attack:
-                        xssStrike(target_url, timeout, verbose)
+                    if XSS:
+                        _xss(TARGET_URL, TIMOUT, VERBOSE)
                         ACTION_VALIDATE = True
-                    if http_polution:
+                    if HTTP_POLUITION:
                         print
                         ACTION_VALIDATE = True
-                    if sh_injection:
+                    if SH_INJECTION:
                         print ("Ataque de sessão")
                         ACTION_VALIDATE = True
-                    if ma_attack:
+                    if MASS_ACTACK:
                         print ("Atribuição em massa")
                         ACTION_VALIDATE = True
-                        
+                    if WORDPRESS:
+                        ACTION_VALIDATE = True
+                        if PLUGIN_NAME:
+                            ## usuário passou o nome de plugin a verificar pelas falhas
+                            print()
+                        else:
+                            print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.orange+"Não foi passada o  " +color.red+"nome do plugin "+color.orange+", o processo praa a detenção dos tipos no alo pode levar muito tempo."+color.end, end='') 
+                            USER_CHOISE = str(input(" Deseja continuar? (s/n):")) 
+                            if USER_CHOISE.lower() == 's':
+                                print("Usuário escolheu o caminho longo")
+                            if USER_CHOISE.lower() == 'n':
+                                print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.orange+" Saindo... "+color.end)
+                                quit()
                     if ACTION_VALIDATE == False:
                         print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Modo de Ação não detectado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver os modos a usar com o spider")
                         logging.error("Sem modo de Ação")
                         quit()
                 else: 
-                    print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Falha na Resolução de DNS, Verifique se há um erro de digitação em "+color.red+target_url+color.end+color.end)
+                    print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Falha na Resolução de DNS, Verifique se há um erro de digitação em "+color.red+TARGET_URL+color.end+color.end)
                     logging.error("Alvo desconhecido")
                     quit()
             else:
-                print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Sem alvo passado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider") ## Organizar a apresentação das sms
+                print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Sem alvo passado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider") 
                 logging.error("[Sem alvo]")
                 quit()
         except AttributeError as e:
-            print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não conseguiu processar a atribuição dos argumentos... saindo..."+color.red)
+            print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não conseguiu processar a atribuição dos argumentos... saindo..."+color.red, e)
             logging.error('Error parsing parameters')
     except ImportError as e:
         print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não consegue importar um ou mais módulos ... saindo..")
