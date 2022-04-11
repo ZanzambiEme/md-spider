@@ -10,6 +10,12 @@ INPUTS_NUBERS = 0
 TARGET_VULNERABLE = False
 INITIAL_FORM_COUNT_VALUE = 1
 INITIAL_COUNT_VALUE = 0
+AVARAGE_TIME_BASED_SQLI = 1 ## uma conexão é estável quando somente e somente se não houver perdas de pacotes e o valor do jiiter for zero ou próximo de zero (https://codepre.com/pt/como-medir-la-estabilidad-de-su-conexion-a-internet-desde-su-pc.html)
+
+## default time delay for sqli blind time-based 
+DEFAULT_SQLI_TIME_BASED_TIME = 5
+## counter for succed sqli bind time-based 
+SQLI_BLIND_TIME_BASED_SUCCED_COUNT = 0
 
 
 HEADERS = {  # default headers

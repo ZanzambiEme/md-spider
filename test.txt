@@ -1,0 +1,1 @@
+Uma conexão com a Internet ou a rede local é estável quando duas coisas acontecem: nenhum pacote é perdido e quando o jitter é zero ou próximo de zero . Quando navegamos na Internet, jogamos online ou assistimos conteúdo streaming em diferentes serviços, é essencial que nossa conexão com a Internet seja estável e que não percamos pacotes ou tenhamos jitter muito alto.

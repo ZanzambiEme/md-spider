@@ -106,30 +106,7 @@ def modulePath():
 
     return getUnicode(os.path.dirname(os.path.realpath(_)), encoding=sys.getfilesystemencoding() or UNICODE_ENCODING)
 
-def checkEnvironment():
-    try:
-        os.path.isdir(modulePath())
-    except UnicodeEncodeError:
-        errMsg = "your system does not properly handle non-ASCII paths. "
-        errMsg += "Please move the sqlmap's directory to the other location"
-        logger.critical(errMsg)
-        raise SystemExit
 
-    if LooseVersion(VERSION) < LooseVersion("1.0"):
-        errMsg = "your runtime environment (e.g. PYTHONPATH) is "
-        errMsg += "broken. Please make sure that you are not running "
-        errMsg += "newer versions of sqlmap with runtime scripts for older "
-        errMsg += "versions"
-        logger.critical(errMsg)
-        raise SystemExit
-
-    # Patch for pip (import) environment
-    if "sqlmap.sqlmap" in sys.modules:
-        for _ in ("cmdLineOptions", "conf", "kb"):
-            globals()[_] = getattr(sys.modules["lib.core.data"], _)
-
-        for _ in ("SqlmapBaseException", "SqlmapShellQuitException", "SqlmapSilentQuitException", "SqlmapUserQuitException"):
-            globals()[_] = getattr(sys.modules["lib.core.exception"], _)
 
 def main():
     """
@@ -139,7 +116,6 @@ def main():
     try:
         dirtyPatches()
         resolveCrossReferences()
-        checkEnvironment()
         setPaths(modulePath())
         banner()
 
