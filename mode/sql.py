@@ -80,7 +80,10 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                         
                         try:
                             requesicao = requests.post(url=exploited_target_url)
+                            
+                            ## estou trabalhando aqui
                             ## pensando em como extrair informações do servidor, endereço dns, ip, e muito mais.....
+                            
                             if 'mysql' in requesicao.text.lower():
                                 print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[MYSQL]"+color.end)
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
@@ -107,6 +110,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                             print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"+color.end+"]    MSSQL"+ color.cian, lines+color.end, end='')
                                         else:
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi"+ color.cian, lines+color.end, end='')
+                                            
                             elif 'syntax error' in requesicao.text.lower():
                                 print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[POSTGRES]")
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" POSTGRES inferencial(CEGA) baseada no tempo"+color.end)
