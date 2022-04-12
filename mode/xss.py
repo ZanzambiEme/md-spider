@@ -65,7 +65,7 @@ try:
                     except ValueError as e:
                         print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+" Valor inválido"+color.end+" Saindo do programa...")
                         quit()
-                if usuario_entrada > count:
+                if usuario_entrada > count or usuario_entrada < 1 :
                     print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"Quantidade "+color.red+"inválida."+color.end+" Saindo do programa...")
                     quit()
                 else:

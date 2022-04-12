@@ -1,6 +1,3 @@
-
---
-/**/  
 SELECT version()
 SELECT user;
 SELECT current_user;
