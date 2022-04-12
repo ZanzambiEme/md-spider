@@ -189,11 +189,9 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                             for user_option_perc in range(INITIAL_FORM_COUNT_VALUE):
                                 ## monta a url de validação dos dados
                                 post_target_url = teste_url_[0]+'//'+teste_url_[2]+'/'+validation_page[user_option]
-                                print(post_target_url)
                                 ## avança na execução conforme instruido pelo o usuário
                                 print("["+color.green+"+"+color.end+"]" +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
                                 input_tag = array_form[user_option].find_all({'input'})
-
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" Injeção inferencial(CEGA) BYPASS AUTH BOOLEAN "+color.end)
                                 with open ('./mode/payload/bypass_auth_payloads_sqli', 'r') as bypass_auth_payloads_sqli:
                                     for lines in bypass_auth_payloads_sqli:
@@ -209,14 +207,12 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                             succed_payloads.append(lines)
                                         else:
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi BYPASS AUTH BOOLEAN"+ color.cian, lines+color.end, end='')
-                                            
+                                '''
+                                relatório
+                                '''          
                                 print("\n O Web spider detetou os seguintes pontos de injeção no alvo:")
-                                
                                 for succed_payloads_lines in succed_payloads:
                                     print("\t Título: MYSQLi BYPASS AUTH BOOLEAN :: Payload: %s" %succed_payloads_lines, end='')
-                                
-                                
-                        
             except requests.exceptions.RequestException as e:
                 print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"alvo"+color.orange+" Inacessível, verifique a sua ligação à internet ou contacte o"+color.red+" Web master."+color.end)
                 quit()

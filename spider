@@ -43,7 +43,7 @@ try:
         sys_info = {'platform':{'system':system, 'release':release, 'version':version, 'machine':arquitect}}
         json_dic = {}
         
-        ''' ##desabilitado por enquanto
+        ''' desabilitado por enquanto
     try:
             with  open('./logs/logs.json', 'a+') as logs_json:
                 js = json.dumps([sys_info, json_dic], separators=(',', ':') , sort_keys=True, indent=4)
@@ -114,7 +114,7 @@ try:
                         print
                         ACTION_VALIDATE = True
                     if SQL_INJECTION:
-                        _sqlInjection(TARGET_URL)                    
+                        _sqlInjection(TARGET_URL)                   
                         ACTION_VALIDATE = True
                     if OS_INJECTION:
                         print
