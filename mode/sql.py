@@ -31,6 +31,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             from core.config import DEFAULT_SQLI_TIME_BASED_TIME
             from core.config import SQLI_BLIND_TIME_BASED_SUCCED_COUNT
             from bs4 import BeautifulSoup
+            from core.utils import urlExplode
             
             import re
             import requests
@@ -38,16 +39,6 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             
             print("["+color.green+"!"+color.end+"]"+color.end+" Modo de"+color.orange+" deteção injeção sql"+ color.end+" passada para o alvo "+color.orange+target_url+color.end)
             print("["+color.green+"+"+color.end+"] Testando a estabilidade da conexão, pode levar alguns minutos...")
-            
-            ''''
-            Desmonta e monta a url pra postagem
-            '''
-            teste_url = target_url.split('/')
-            teste_url_ = {}
-            index = -1
-            for teste in teste_url:
-                index +=1
-                teste_url_[index] = teste
             
             if(avaregeTime(target_url) >= AVARAGE_TIME_BASED_SQLI):
                 print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" A sua conexão parece estar instável, recomenda-se que se tenha uma conexão estável."+color.end, end='')
@@ -114,10 +105,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                         else:
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi"+ color.cian, lines+color.end, end='')
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
-                                
-                                
-                                
-                                         
+        
                             elif 'native client' in requesicao.text.lower():
                                 print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[MSSQL]")
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MSSQL inferencial(CEGA) baseada no tempo"+color.end)
@@ -177,8 +165,8 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                     array_form = {}
                     input_dic = {}
                     validation_page = {} 
-                    
                     succed_payloads = []
+                    url_exploded = urlExplode(target_url)
                     
                     ## percorre o objeccto Soup do formulário, guardando ele no array_form com índices inteiros
                     for form_perc in forms:
@@ -203,7 +191,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                         else:
                             for user_option_perc in range(INITIAL_FORM_COUNT_VALUE):
                                 ## monta a url de validação dos dados
-                                post_target_url = teste_url_[0]+'//'+teste_url_[2]+'/'+validation_page[user_option]
+                                post_target_url = url_exploded[0]+'//'+url_exploded[2]+'/'+validation_page[user_option]
                                 ## avança na execução conforme instruido pelo o usuário
                                 print("["+color.green+"+"+color.end+"]" +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
                                 input_tag = array_form[user_option].find_all({'input'})

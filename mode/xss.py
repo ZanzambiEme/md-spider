@@ -61,7 +61,7 @@ try:
                     usuario_entrada = usuario_entrada
                 else:
                     try:   
-                        usuario_entrada =  int(input('Quantos desejas testar: '))
+                        usuario_entrada =  int(input(' Qual a posição do formulário que desejas testar?: '))
                     except ValueError as e:
                         print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+" Valor inválido"+color.end+" Saindo do programa...")
                         quit()

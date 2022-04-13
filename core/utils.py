@@ -35,3 +35,13 @@ def avaregeTime(url):
         i = i + 1
     media_requisicao = sum(values) / float(len(values))
     return media_requisicao
+
+''' divide a url em partes, transformando-o em um array associativo'''
+def urlExplode(target):
+    url = target.split('/')
+    url_exploded = {}
+    index = -1
+    for teste in url:
+        index +=1
+        url_exploded[index] = teste
+    return url_exploded
