@@ -8,8 +8,10 @@
 ## começar por testes de injeção sql baseada no tempo... criar um jit
 
 from email import header
+import os
 from posixpath import split
 from random import betavariate
+import socket
 from unittest import result
 from cherrypy import url
 from pendulum import time
@@ -36,6 +38,16 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             
             print("["+color.green+"!"+color.end+"]"+color.end+" Modo de"+color.orange+" deteção injeção sql"+ color.end+" passada para o alvo "+color.orange+target_url+color.end)
             print("["+color.green+"+"+color.end+"] Testando a estabilidade da conexão, pode levar alguns minutos...")
+            
+            ''''
+            Desmonta e monta a url pra postagem
+            '''
+            teste_url = target_url.split('/')
+            teste_url_ = {}
+            index = -1
+            for teste in teste_url:
+                index +=1
+                teste_url_[index] = teste
             
             if(avaregeTime(target_url) >= AVARAGE_TIME_BASED_SQLI):
                 print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" A sua conexão parece estar instável, recomenda-se que se tenha uma conexão estável."+color.end, end='')
@@ -84,6 +96,11 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                             ## estou trabalhando aqui
                             ## pensando em como extrair informações do servidor, endereço dns, ip, e muito mais.....
                             
+                            ## tentando extrai informaçẽs do servidor com socket
+                                
+                            server = os.popen("nslookup %s  " % (teste_url_[2])).read()
+                        
+                            
                             if 'mysql' in requesicao.text.lower():
                                 print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[MYSQL]"+color.end)
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
@@ -97,6 +114,9 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                         else:
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi"+ color.cian, lines+color.end, end='')
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
+                                
+                                
+                                
                                          
                             elif 'native client' in requesicao.text.lower():
                                 print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[MSSQL]")
@@ -149,16 +169,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                     
                     main_requesition = requests.get(url=target_url)
                     main_requesition_parsed = BeautifulSoup(main_requesition.content, 'html.parser')
-                    
-                    ''''
-                    Desmonta e monta a url pra postagem
-                    '''
-                    teste_url = target_url.split('/')
-                    teste_url_ = {}
-                    index = -1
-                    for teste in teste_url:
-                        index +=1
-                        teste_url_[index] = teste
+                
                     ## filtrando todos os formulários...
                     
                     forms = main_requesition_parsed.find_all('form')
