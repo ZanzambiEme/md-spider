@@ -36,3 +36,6 @@ VULNERABLE_COLLUM_DETECTING = "+UNION+SELECT+"
 CHECKING_FOR_DBMS_VERSION = "version()";
 GET_TABLES_NAMES = "(SELECT+group_concat(table_name)+from+information_schema.tables+where+table_schema=database())" 
 
+
+OS = ['ubuntu', 'kali', 'windows', 'macos', 'oracle solaris', 'fedora','susi', 'red hat' ]
+MYSQL_SERVER_VERSIONS = ['8.0.28', '8.0.22', '8.0.30', '8.0.29', '8.0.27', '8.0.26', '8.0.25', '8.0.21' ]
