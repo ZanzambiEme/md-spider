@@ -35,6 +35,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             from core.utils import urlExplode
             from mode.plugin.dbfingerprint import _dbFingerprint
             from mode.plugin.dbfingerprint import _serverVersion
+            from mode.plugin.dbfingerprint import _getDatabaseName
             
             import re
             import requests
@@ -46,7 +47,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             if(avaregeTime(target_url) >= AVARAGE_TIME_BASED_SQLI):
                 print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" A sua conexão parece estar instável, recomenda-se que se tenha uma conexão estável."+color.end, end='')
                 ## ainda mostro o jitter aqui só pra comparar com o tempo de teste de injeções sql
-                user_option = str(input(" Deseja continuar? (sim/nao)"))
+                user_option = str(input(" Deseja continuar? (sim/nao): "))
                 if user_option.lower() == 'sim':
                     pass
                 elif user_option.lower() == 'nao':
@@ -75,10 +76,15 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                             '''
                                 fazendo um fingerprint no servidor
                             '''
+                            
+                            print("\n["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) ORDER QUERY TECHNIQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end)
                             current_table_cullumns_number = _dbFingerprint(target_url)
+                            
+                            print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end)
                             server_fingerprint = _serverVersion(target_url, current_table_cullumns_number)
-                            print("\n["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) ORDER QUERY TECHNIQUE..."+FIND_NUMBER_OF_COLLUM_IN_TABLE+color.end)
-                            print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE... "+color.end,end='')
+                            
+                            _getDatabaseName(target_url, current_table_cullumns_number)
+
                            
                             print("\n["+color.green+"+"+color.end+"] Identificando o SGBD com "+color.cian+" SQLI INFERENCIAL(CEGA)"+color.end)
                             if 'mysql' in requesicao.text.lower():
@@ -93,7 +99,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                         print("\t%s : não encontrado" % header_perc)
                                 print("\tSGBD alvo: MYSQL")        
                                 print("\tVersão do SGBD: %s" %server_fingerprint[1])
-                                print("\tSistema backand do SGBD: %s" %server_fingerprint[2])
+                                print("\tSistema backend (OS) do SGBD: %s" %server_fingerprint[2])
                                 print("\tQuantidade de colunas na tabela actual: %s "%current_table_cullumns_number)
                                 print(" ----------")
                                 ## termino do relatório

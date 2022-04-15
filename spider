@@ -83,8 +83,8 @@ try:
             args    = parse.parse_args()
             
             PAYLOADS  = args.payload
-            TIMOUT  = args.t
-            VERBOSE  = args.v
+            TIMOUT    = args.t
+            VERBOSE   = args.v
             
             TARGET_URL       = args.target
             HTML_INJECTION   = args.html

