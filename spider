@@ -156,7 +156,7 @@ try:
                 logging.error("[Sem alvo]")
                 quit()
         except AttributeError as e:
-            print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não conseguiu processar a atribuição do argumento ou "+color.red, e, color.end+ ", saindo...")
+            print('\n'+color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não conseguiu processar a atribuição do argumento..."+color.red, e, color.orange+ ", saindo..."+color.end)
             logging.error('Error parsing parameters')
     except ImportError as e:
         print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não consegue importar um ou mais módulos ... saindo..")

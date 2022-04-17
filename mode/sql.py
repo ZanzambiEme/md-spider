@@ -80,7 +80,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                             print("\n["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) ORDER QUERY TECHNIQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end)
                             current_table_cullumns_number = _dbFingerprint(target_url)
                             
-                            print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end)
+                            print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end, end='')
                             server_fingerprint = _serverVersion(target_url, current_table_cullumns_number)
                             
                             _getDatabaseName(target_url, current_table_cullumns_number)
@@ -223,7 +223,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                 for succed_payloads_lines in succed_payloads:
                                     print("\t Título: MYSQLi BYPASS AUTH BOOLEAN :: Payload: %s" %succed_payloads_lines, end='')
             except requests.exceptions.RequestException as e:
-                print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"alvo"+color.orange+" Inacessível, verifique a sua ligação à internet ou contacte o"+color.red+" Web master."+color.end)
+                print('\n'+color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"alvo"+color.orange+" Inacessível, verifique a sua ligação à internet ou contacte o"+color.red+" Web master."+color.end)
                 quit()
         except ImportError as e:
             print(color.info_1+color.red_0+color.info_2+"Erro: Falha na "+color.red+"importação"+color.orange+" dos Módulos.")

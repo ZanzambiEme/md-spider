@@ -41,3 +41,4 @@ GET_CURRENT_USER = "(SELECT+CURRENT_USER)"
 
 OS = ['ubuntu', 'kali', 'windows', 'macos', 'oracle solaris', 'fedora','susi', 'red hat' ]
 MYSQL_SERVER_VERSIONS = ['8.0.28', '8.0.22', '8.0.30', '8.0.29', '8.0.27', '8.0.26', '8.0.25', '8.0.21' ]
+
