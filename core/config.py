@@ -31,7 +31,7 @@ HEADERS = {  # default headers
 PROXIES_ = {'http': 'http://217.219.61.6:8080', 'https': 'https://217.219.61.6:8080'}#  Fonte de servidor proxy usado configurado  https://spys.one/en/
 
 
-FIND_NUMBER_OF_COLLUM_IN_TABLE = '+ORDER+BY+' # aqui vai acrescentando a quanntidade de ordenação e validar
+FIND_NUMBER_OF_COLLUM_IN_TABLE = '+ORDER+BY+'
 VULNERABLE_COLLUM_DETECTING = "+UNION+SELECT+" 
 CHECKING_FOR_DBMS_VERSION = "version()";
 DATABASE_NAME = "database()";

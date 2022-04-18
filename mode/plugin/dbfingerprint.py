@@ -110,7 +110,18 @@ def _getDatabaseName(target, cullumns_number):
             main_request = requests.get(url=exploited_target_url)
             main_request_parsed = BeautifulSoup(main_request.content, 'html.parser')
             
-            print(exploited_target_url)
+            if 'localhost' in main_request_parsed.text.lower():
+                div = main_request_parsed.find_all('div')
+                for div in div:
+                    link = main_request_parsed.find_all('a')
+                    for link in link:
+                        h = main_request_parsed.find_all('h3')       
+                        for h in h:
+                            print(h)
+                            
+                break
+        
+        
                 
                 
             
