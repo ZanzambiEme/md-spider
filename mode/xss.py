@@ -94,7 +94,8 @@ try:
                                                 main_reqsuest = requests.post(url=url, timeout=request_timeout, headers=header, data=input_dic)#, proxies= core.config.PROXIES)
                                                 if  lines in main_reqsuest.text:
                                                     if verbose:
-                                                        print("["+color.green+"ok"+color.end+"] Viável: "+color.end+lines, end=''+color.end)
+                                                        print("["+color.green+"+"+color.end+"] ["+color.green+"Viável"++color.end+lines, end=''+color.end)
+                                                        
                                                         config.TARGET_VULNERABLE = True
                                                         unblocked_payloads[random] = lines
                                                     else:
@@ -104,7 +105,7 @@ try:
                                                         # adiciona a percentagem do sucesso
                                                 if not lines in main_reqsuest.text:
                                                     if verbose:
-                                                        print("["+color.red+"-"+color.end+"]"+color.green+color.end+" Bloqueado: "+lines,end=''+color.end)
+                                                        print("["+color.red+"-"+color.end+"] ["+color.red+"Bloqueado"+color.end+"] [PAYLOAD] "+lines,end=''+color.end)
                                                     else:
                                                         pass
                                                         # adiciona a percentagem do secesso

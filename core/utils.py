@@ -30,7 +30,7 @@ def urlValidator(url):
 def avaregeTime(url):
     i = 0
     values = []
-    while i < 1:  ### reduzi o número de requesições devido a testes frequentes, acrecento-lo-ei pra 100 após terminar
+    while i < 1:  
         try: 
             req = requests.get(url)
             values.append(int(req.elapsed.total_seconds()))

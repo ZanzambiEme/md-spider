@@ -17,6 +17,8 @@ DEFAULT_SQLI_TIME_BASED_TIME = 5
 ## counter for succed sqli bind time-based 
 SQLI_BLIND_TIME_BASED_SUCCED_COUNT = 0
 
+DEFAULT_MYSQL_PORT = 3306
+
 
 HEADERS = {  # default headers
     'User-Agent': '$',
