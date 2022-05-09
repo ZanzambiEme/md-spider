@@ -91,7 +91,7 @@ def _getDatabaseNameU(target, cullumns_number):
     columns = str()
     database_user_fingerprint = {}
     if para.search(target):
-        splited_para = para.search(target).group()
+        splited_para = para.search(target).group() 
         for collumns_perc in range(1, cullumns_number+1): ## apenas preenche umma lista contendo as colunas
             collumns_number_list.append(collumns_perc)
         ## transforma a lista em string eliminando os parentes reto

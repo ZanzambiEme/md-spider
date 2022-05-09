@@ -1,4 +1,8 @@
-    # !/usr/bin/env python3
+# !/usr/bin/env python3
+from pymysql import NULL
+from responses import target
+from datetime import datetime
+
 try:
     from curses import meta
     from matplotlib.pyplot import title
@@ -21,14 +25,16 @@ try:
         import core.colors as color
         import core.utils as utilsfucntions
         from core.utils import logginStore
+        from core.utils import exitTheProgram
         
         ## importação de modos de ação
         from mode.xss import _xss
         from mode.sql import _sqlInjection
+        from mode.xxe import  _xxe
     
-        # Web spider Banner 
+        # Web spider Banner  
         from core.banner import WELCOME_BANNER 
-        print('\t'+color.green+random.choice(WELCOME_BANNER).center(10)+color.end)
+        print('\t'+color.cian+random.choice(WELCOME_BANNER).center(10)+color.end)
         
         logginStore()
         logging.info('[Start on -{} ]'. format(platform.platform()))
@@ -65,6 +71,8 @@ try:
         parse.add_argument('-r', '--response', metavar='',  help='Interação da página em relação aos dados do login inseridos. (python3 spider -u alvo -sql --response "usuario ou login inválido")', dest='response')
         parse.add_argument('-v', '--verbose', help='Habilita o modo Verbose, mostrando processos a serem executados em background', action='store_true') 
         parse.add_argument('-T', '--tamper', help='Usando esse flag, o Spider tentará usar mecanismos de modo a ultrapassar os WAF', action='store_true')
+        parse.add_argument('-oS', '--shell', help='Usando esse flag, o Spider tentará retornar ums uma shell reverso', action='store_true')
+        
         ## modos de de detenção []
         mode = parse.add_argument_group(title='Modos de Detenção')
         mode.add_argument('-html', help='injeção html (e.g: python3 spider -u alvo -t 4 -html --proxy 0.0.0.0 )',action='store_true',dest='html')
@@ -90,13 +98,14 @@ try:
             RESPONSE  = args.response
             COOKIE    = args.cookie
             TAMPER    = args.tamper
+            SHELL     = args.shell
             
             PROXY_PORT   = args.proxy_port
             PROXY_SERVER = args.proxy_server
             
             TARGET_URL       = args.target
             HTML_INJECTION   = args.html
-            IFRAME_INJECTION = args.xml
+            XML_INJECTION = args.xml
             SQL_INJECTION    = args.sql
             OS_INJECTION     = args.os
             XSS              = args.xss
@@ -117,11 +126,14 @@ try:
                     if HTML_INJECTION:
                         print
                         ACTION_VALIDATE = True
-                    if IFRAME_INJECTION:
-                        print
+                    if XML_INJECTION:
+                        '''
+                        chamada à função de detenção xxe Xpath xml ind()
+                        '''
+                        _xxe(TARGET_URL,'', '', VERBOSE, '', '')
                         ACTION_VALIDATE = True
                     if SQL_INJECTION:
-                        _sqlInjection(TARGET_URL, RESPONSE, COOKIE)                   
+                        _sqlInjection(TARGET_URL, RESPONSE, COOKIE, SHELL)                   
                         ACTION_VALIDATE = True
                     if OS_INJECTION:
                         print
@@ -147,31 +159,29 @@ try:
                             ## usuário passou o nome de plugin a verificar pelas falhas
                             print()
                         else:
-                            print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.orange+"Não foi passada o  " +color.red+"nome do plugin "+color.orange+", o processo para a detenção dos tipos no alvo pode levar muito tempo."+color.end, end='') 
+                            print(color.orange+"[!][", datetime.now() ,"]  Aviso: Não foi passada o nome do plugin, o processo para a detenção dos tipos no alvo pode levar muito tempo."+color.end, end='') 
                             USER_CHOISE = str(input(" Deseja continuar? (s/n):")) 
                             if USER_CHOISE.lower() == 's':
                                 print("Usuário escolheu o caminho longo")
                             if USER_CHOISE.lower() == 'n':
-                                print(color.info_1+color.red_0+color.info_2+" Aviso:"+color.end+color.orange+" Saindo... "+color.end)
+                                print(color.info_1+color.red_0+color.info_2+"[", datetime.now() ,"]  Aviso:"+color.end+color.orange+" Saindo... "+color.end)
                                 quit()
                     if ACTION_VALIDATE == False:
-                        print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Modo de Ação não detectado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver os modos a usar com o spider")
-                        logging.error("Sem modo de Ação")
-                        quit()
+                        print(color.red+"[!][", datetime.now() ,"] Erro: Modo de Ação não detectado, execute"+color.cian+" [compilador] spider [-h] " +color.red+ "para ver os modos a usar com o spider"+color.end)
+                        exitTheProgram()
                 else: 
-                    print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Falha na Resolução de DNS, Verifique se há um erro de digitação em "+color.red+TARGET_URL+color.end+color.end)
-                    logging.error("Alvo desconhecido")
-                    quit()
+                    print(color.red+"[!][", datetime.now() ,"] Erro: Falha na Resolução de DNS, Verifique se há um erro de digitação em "+color.cian+TARGET_URL+color.end)
+                    exitTheProgram()
             else:
-                print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" Sem alvo passado, execute"+color.red+ " [compilador] spider [-h] " +color.orange+  "para ver as opões a usar com o spider") 
-                logging.error("[Sem alvo]")
-                quit()
+                print(color.red+"[!][", datetime.now() ,"] Erro: Sem alvo passado, execute" +color.cian+ " [compilador] spider [-h] " +color.red+  "para ver as opões a usar com o spider"+color.end) 
+                exitTheProgram()
         except AttributeError as e:
-            print('\n'+color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não conseguiu processar a atribuição do argumento..."+color.red, e, color.orange+ ", saindo..."+color.end)
-            logging.error('Error parsing parameters')
+            print('\n'+color.red+"[!][", datetime.now() ,"] Erro:  O programa não conseguiu processar a atribuição do argumento...", e, color.end)
+            exitTheProgram()
     except ImportError as e:
-        print(color.info_1+color.red_0+color.info_2+color.red+ " Erro:"+color.orange+" O programa não consegue importar um ou mais módulos ... saindo..")
-        logging.error('Import Module Error')
+        print(color.red+"[!][", datetime.now() ,"] Erro:  Falha na importação dos Módulos."+color.end)
+        exitTheProgram()
+        #logging.error('Import Module Error')
 except KeyboardInterrupt as e:
-    print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"Interrupção"+color.orange+" pela parte do usuário"+color.red+" Saindo..."+color.end)
-    quit()       
+    print(color.red+"[!][", datetime.now() ,"] Erro: Interrupção pela parte do usuário"+color.end)
+    exitTheProgram()   

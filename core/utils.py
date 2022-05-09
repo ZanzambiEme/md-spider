@@ -1,11 +1,15 @@
 # !/usr/bin/env python3
 
 from fileinput import filename
+
+from sympy import python
 from core import colors as color
+from datetime import datetime
+import requests
 import logging
 import re
 
-import requests
+
 
 def logginStore():
     try:
@@ -36,7 +40,7 @@ def avaregeTime(url):
             values.append(int(req.elapsed.total_seconds()))
             i = i + 1
         except requests.exceptions.RequestException as e:
-            print(color.info_1+color.red_0+color.info_2+" Erro: "+color.red+"alvo"+color.orange+" Inacessível, verifique a sua ligação à internet ou contacte o"+color.red+" Web master."+color.end)
+            print(color.info_1+color.red_0+color.info_2+"[",datetime.now(),"]  Erro: "+color.red+"alvo"+color.orange+" Inacessível, verifique a sua ligação à internet ou contacte o"+color.red+" Web master."+color.end)
             quit()
     media_requisicao = sum(values) / float(len(values))
     return media_requisicao
@@ -50,3 +54,13 @@ def urlExplode(target):
         index +=1
         url_exploded[index] = teste
     return url_exploded
+
+
+def exitTheProgram():
+    print("<<"+color.admin_side, datetime.now(), color.end+" - @ Web sipder saindo...>>")
+    quit()
+    
+    
+def errorMessages():
+    return  print(color.red+"[",datetime.now(),"]", end='')
+    
