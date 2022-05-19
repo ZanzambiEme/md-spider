@@ -1,22 +1,20 @@
 # !/usr/bin/env python3
-
-from fileinput import filename
-
-from sympy import python
 from core import colors as color
 from datetime import datetime
+
 import requests
 import logging
 import re
+import os
 
+
+from core.config import INITIAL_COUNT_VALUE, PYTHON_VERSION
 
 
 def logginStore():
     try:
         import core.colors as color
-        
         logging.basicConfig(filename='./logs/WebSpider.log', format='%(levelname)s [%(asctime)s] %(name)s %(process)d %(pathname)s [%(message)s]', level=logging.DEBUG, encoding='utf-8')
-        
     except ImportError as e:
         print(color.bad+' erro em importar % '.format(e))
         
@@ -40,7 +38,7 @@ def avaregeTime(url):
             values.append(int(req.elapsed.total_seconds()))
             i = i + 1
         except requests.exceptions.RequestException as e:
-            print(color.info_1+color.red_0+color.info_2+"[",datetime.now(),"]  Erro: "+color.red+"alvo"+color.orange+" Inacessível, verifique a sua ligação à internet ou contacte o"+color.red+" Web master."+color.end)
+            print(color.red+"[!][",datetime.now(),"]  Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o Web master."+color.end)
             quit()
     media_requisicao = sum(values) / float(len(values))
     return media_requisicao
@@ -55,12 +53,77 @@ def urlExplode(target):
         url_exploded[index] = teste
     return url_exploded
 
-
 def exitTheProgram():
-    print("<<"+color.admin_side, datetime.now(), color.end+" - @ Web sipder saindo...>>")
+    print("<<  "+color.admin_side, datetime.now(), color.end+" - @  Web sipder saindo...>>")
     quit()
-    
-    
+       
 def errorMessages():
     return  print(color.red+"[",datetime.now(),"]", end='')
     
+def checkPythonVersion():
+    version = os.popen("python --version").read()
+    version = version.split(' ')
+    if str(PYTHON_VERSION) in  version[1]:
+        pass
+    else:
+        print(color.red+"[!][", datetime.now(),"] Erro: versão de python incopatível, o Web Spider só pode ser executado  em versões IGUAL ou MAIOR que 3."+color.end)
+        exitTheProgram()
+    
+def checkURLIntegrity(url):
+    print("["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando a integridade do alvo...")
+    try:
+        req = requests.get(url=url)
+    except requests.exceptions.RequestException :
+        print(color.red+"[!][", datetime.now() ,"] Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o  Web master."+color.end)
+        exitTheProgram()
+    if req.status_code == 404:
+        print(color.red+"[!][", datetime.now(),"]  Erro: não foi possíveel verificar a integridade do alvo..."+color.end)
+        exitTheProgram()
+    else:
+        print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Alvo intégro")
+        pass
+    
+def formEnum(form):
+    form_quant = -1
+    array_form = {}
+    validation_page = {} 
+    
+    for form_perc in form:
+        form_quant += 1
+        if 'action' in form_perc.attrs:
+            validation_page[form_quant] = form_perc['action']      
+        array_form[form_quant] = form_perc 
+    if form_quant  == 0:
+        print("["+color.green+"+"+color.end+"]"+color.end+"["+color.admin_side, datetime.now(), color.end+"]  Foi enumerado [(1)] formulário.")
+        pass
+    else:
+        print("["+color.green+"+"+color.end+"]"+color.end+"["+color.admin_side, datetime.now(), color.end+"]  Foi enumerado [0 -(%s)] formulários." % (form_quant), end='')
+        pass
+    if form_quant == 0:
+        form_quant = 1
+        user_option = 0
+    else:
+        try:
+            user_option = int(input(" Qual a posição do formulário que desejas testar?: "))
+            pass
+        except ValueError as e:
+            print(color.red+"[!][", datetime.now() ,"]  Erro: Valor inválido"+color.endswith)
+            exitTheProgram()
+        if user_option > form_quant or user_option < 0:
+            print(color.red+"[!][", datetime.now() ,"]  Erro: Quantidade inválida."+color.end)
+            exitTheProgram()
+        else:
+            pass
+    return user_option
+
+
+def arrayForm(form_array):
+    validation_page = {}
+    form_quant = -1;
+    for form_perc in form_array:
+        form_quant += 1
+        #if 'action' in form_perc.attrs:
+        #   validation_page[form_perc.attrs['action']]        
+        form_array[form_quant] = form_perc
+    return form_array
+            

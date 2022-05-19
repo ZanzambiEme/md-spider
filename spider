@@ -1,46 +1,47 @@
 # !/usr/bin/env python3
-from pymysql import NULL
-from responses import target
 from datetime import datetime
+import core.colors as color
+import random
+# Web spider Banner  
+from core.banner import WELCOME_BANNER 
+print('\t'+color.cian+random.choice(WELCOME_BANNER).center(10)+color.end)
 
+'''
+Checando a versão do python, porên não funconando ainda como deveria
+'''
 try:
-    from curses import meta
-    from matplotlib.pyplot import title
-
-
+    import concurrent
+except ImportError as e:
+    print("Erro de importação")
+try:
     try:
     
-        from core.config import ACTION_VALIDATE
-
-        import os
-        import json  
         
-        import random
-        import logging
         import platform
         import argparse
-        
-        
-        import core.config
-        import core.colors as color
-        import core.utils as utilsfucntions
-        from core.utils import logginStore
+
+        from core.utils import checkPythonVersion
         from core.utils import exitTheProgram
         
-        ## importação de modos de ação
-        from mode.xss import _xss
-        from mode.sql import _sqlInjection
-        from mode.xxe import  _xxe
     
-        # Web spider Banner  
-        from core.banner import WELCOME_BANNER 
-        print('\t'+color.cian+random.choice(WELCOME_BANNER).center(10)+color.end)
+        print(color.orange+"[!][", datetime.now(),"]  Checando o Sistema...")
+        system    = platform.system () 
+        # checandos a plataforma [SO,e PYTHON]
+        if 'windows' in system.lower():
+            print(color.red+"[!][", datetime.now(),"]  Erro: O Web spider não é conpatível com Sistema Operacional Windows"+color.end)
+            exitTheProgram()
+        else:
+            pass
+        print(color.orange+"[!][", datetime.now(),"]  Checando a versão do python..."+color.end)
+        checkPythonVersion()
+        
+        
+        import logging
+        from core.utils import logginStore
         
         logginStore()
         logging.info('[Start on -{} ]'. format(platform.platform()))
         
-        
-        system    = platform.system () 
         release   = platform.release()
         version   = platform.version()
         arquitect = platform.machine()
@@ -48,124 +49,94 @@ try:
         sys_info = {'platform':{'system':system, 'release':release, 'version':version, 'machine':arquitect}}
         json_dic = {}
         
-        ''' desabilitado por enquanto
-    try:
+        try:
+            import json  
             with  open('./logs/logs.json', 'a+') as logs_json:
                 js = json.dumps([sys_info, json_dic], separators=(',', ':') , sort_keys=True, indent=4)
                 logs_json.write(js)
         except FileNotFoundError as e:
-            print('Arquivo não encontrado')  #desabilitado por enquanto.... NOTA BEM!
-        '''
+            print('Arquivo não encontrado')  
+            exitTheProgram()
+    
         
         parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider', epilog='CopyRight Spider Developers')
-        
         parse.add_argument('-u', '--url', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1- para alvos injeção sql', dest='target') 
-        parse.add_argument('-d', '--data', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
-       
-        
-        #parse.add_argument('-pN', metavar='', help='Nome de plugin a ser explorado a busca de falhas', dest='plugin_name')
-        parse.add_argument('-p', '--port', metavar='', help='Porta do servidor proxy eg: python3 spider -u alvo -sql --proxy 0.0.0.0 -p 8080)', dest='proxy_port')
-        parse.add_argument('-P', '--proxy', metavar='', help='Servidor proxy (eg: python3 spider -u alvo -sql --proxy 0.0.0.0)', dest='proxy_server')
-        parse.add_argument('-c', '--cookie', metavar='', help='Cookies de sessão http a serem usados (e.g: python3 spider -u alvo -sql --proxy 0.0.0.0 -p 8080 -c a8d127e...)', dest='cookie')
-        parse.add_argument('-t', '--timeout', metavar='', help='Define o tempo da requisição (e.g: python3 spider -u alvo -t 4 -sql --proxy 0.0.0.0 -p 8080 -c a8d127e...)', dest='timeout')
+        #parse.add_argument('-d', '--data', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
+       # parse.add_argument('-p', '--port', metavar='', help='Porta do servidor proxy eg: python3 spider -u alvo -sql --proxy 0.0.0.0 -p 8080)', dest='proxy_port')
+       # parse.add_argument('-P', '--proxy', metavar='', help='Servidor proxy (eg: python3 spider -u alvo -sql --proxy 0.0.0.0)', dest='proxy_server')
+       # parse.add_argument('-c', '--cookie', metavar='', help='Cookies de sessão http a serem usados (e.g: python3 spider -u alvo -sql --proxy 0.0.0.0 -p 8080 -c a8d127e...)', dest='cookie')
+        parse.add_argument('-t', '--timeout', metavar='', help='Define o tempo da requisição (e.g: python3 spider -u alvo -t 4 -sql -- proxy 0.0.0.0 -p 8080 -c a8d127e...)', dest='timeout')
         parse.add_argument('-r', '--response', metavar='',  help='Interação da página em relação aos dados do login inseridos. (python3 spider -u alvo -sql --response "usuario ou login inválido")', dest='response')
         parse.add_argument('-v', '--verbose', help='Habilita o modo Verbose, mostrando processos a serem executados em background', action='store_true') 
-        parse.add_argument('-T', '--tamper', help='Usando esse flag, o Spider tentará usar mecanismos de modo a ultrapassar os WAF', action='store_true')
+        parse.add_argument('-http', '--http_enum', help='Enumera cabeçalhos e verbos http vulneráveis', action='store_true') 
+        #parse.add_argument('-T', '--tamper', help='Usando esse flag, o Spider tentará usar mecanismos de modo a ultrapassar os WAF', action='store_true')
         parse.add_argument('-oS', '--shell', help='Usando esse flag, o Spider tentará retornar ums uma shell reverso', action='store_true')
         
-        ## modos de de detenção []
-        mode = parse.add_argument_group(title='Modos de Detenção')
-        mode.add_argument('-html', help='injeção html (e.g: python3 spider -u alvo -t 4 -html --proxy 0.0.0.0 )',action='store_true',dest='html')
+        mode = parse.add_argument_group(title='Modos de Detenção')  ## modos de de detenção []
+        #mode.add_argument('-html', help='injeção html (e.g: python3 spider -u alvo -t 4 -html --proxy 0.0.0.0 )',action='store_true',dest='html')
         mode.add_argument('-xml', help='Habilita o modo de detenção xml (e.g: python3 spider -u alvo -t 4 -xml --proxy 0.0.0.0 ) ', action='store_true', dest='xml')
-        mode.add_argument('-sh', help='Injeção de sessão (e.g: python3 spider -u alvo -t 4 -sh --proxy 0.0.0.0 )', action='store_true', dest='sh')
+        #mode.add_argument('-sh', help='Injeção de sessão (e.g: python3 spider -u alvo -t 4 -sh --proxy 0.0.0.0 )', action='store_true', dest='sh')
         mode.add_argument('-sql', help='Habilita o modo de Detenção e injeção sql (e.g: python3 spider -u alvo -t 4 -sql --proxy 0.0.0.0 )', action='store_true', dest='sql')
-        mode.add_argument('-os', help='injeção  os (e.g: python3 spider -u alvo -t 4 -os --proxy 0.0.0.0 )', action='store_true', dest='os')
+        #mode.add_argument('-os', help='injeção  os (e.g: python3 spider -u alvo -t 4 -os --proxy 0.0.0.0 )', action='store_true', dest='os')
         mode.add_argument('-xss',help='Habilita o modo de detenção Cross-Site Srcipting (xss) (e.g: python3 spider -u alvo -t 4 -xss --proxy 0.0.0.0 )', action='store_true', dest='xss')
         mode.add_argument('-ma', help='Ataque de Atribuição em Massa (e.g: python3 spider -u alvo -t 4 -ma --proxy 0.0.0.0 ) ', action='store_true', dest='ma')
+        
         other = parse.add_argument_group( title='Outras Vulnerabilidades...')
-        #other.add_argument('-http',help='Poluição dos Parâmetros HTTP', action='store_true',dest='http')
         other.add_argument('--jquery', help='Verificar por potenciais falhas na versão do jquery', action='store_true', dest='jquery')
         other.add_argument('--wordpress', help='Verificar versões vulneráveis do plugins Wordpress', action='store_true', dest='wordpress')
         other.add_argument('--laravel', help='Verificar versões vulneráveis no Laravel no alvo', action='store_true', dest='laravel')
         other.add_argument('--nodeJs', help='Verificar versões vulneráveis no Laravel no alvo nodeJs no alvo passado', action='store_true', dest='nodejs')
-        
         try:
             args    = parse.parse_args()
-            
-            PAYLOADS  = args.payload
+           #PAYLOADS  = args.payload
             TIMOUT    = args.timeout
             VERBOSE   = args.verbose
             RESPONSE  = args.response
-            COOKIE    = args.cookie
-            TAMPER    = args.tamper
+           #COOKIE    = args.cookie
+            #TAMPER    = args.tamper
             SHELL     = args.shell
-            
-            PROXY_PORT   = args.proxy_port
-            PROXY_SERVER = args.proxy_server
+            HTTP_ENUMERATION = args.http_enum
+            #PROXY_PORT   = args.proxy_port
+            #PROXY_SERVER = args.proxy_server
             
             TARGET_URL       = args.target
-            HTML_INJECTION   = args.html
-            XML_INJECTION = args.xml
+            #HTML_INJECTION   = args.html
+            XML_INJECTION    = args.xml
             SQL_INJECTION    = args.sql
-            OS_INJECTION     = args.os
+            #OS_INJECTION     = args.os
             XSS              = args.xss
-            #HTTP_POLUITION   = args.http
-            SH_INJECTION     = args.sh
+            #SH_INJECTION     = args.sh
             MASS_ACTACK      = args.ma
             
-            ## algumas tecnologias com vulnerabilidades conhecida
-            #PLUGIN_NAME = args.plugin_name
-            JQUERY      = args.jquery
-            WORDPRESS   = args.wordpress
-            LARAVEL     = args.laravel
-            NODEJS      = args.nodejs
-        
-            
+            #########################################
+            JQUERY      = args.jquery               #
+            WORDPRESS   = args.wordpress            #
+            LARAVEL     = args.laravel              #
+            NODEJS      = args.nodejs               #
+            #########################################
             if TARGET_URL:
+        
+                import core.utils as utilsfucntions
+                from core.config import ACTION_VALIDATE
+                
+                ## importação de modos de ação
+                from mode.xss import _xss
+                from mode.sql import _sqlInjection
+                from mode.xxe import  _xxe
+                
                 if(utilsfucntions.urlValidator(TARGET_URL) == True):
-                    if HTML_INJECTION:
-                        print
-                        ACTION_VALIDATE = True
                     if XML_INJECTION:
-                        '''
-                        chamada à função de detenção xxe Xpath xml ind()
-                        '''
-                        _xxe(TARGET_URL,'', '', VERBOSE, '', '')
+                        _xxe(TARGET_URL,'', '', VERBOSE, '', '', HTTP_ENUMERATION)
                         ACTION_VALIDATE = True
                     if SQL_INJECTION:
-                        _sqlInjection(TARGET_URL, RESPONSE, COOKIE, SHELL)                   
-                        ACTION_VALIDATE = True
-                    if OS_INJECTION:
-                        print
+                        _sqlInjection(TARGET_URL, RESPONSE, SHELL)                   
                         ACTION_VALIDATE = True
                     if XSS:
-                        _xss(TARGET_URL, TIMOUT, VERBOSE)
-                        ACTION_VALIDATE = True
-                        '''
-                        
-                    if HTTP_POLUITION:
-                        print
-                        ACTION_VALIDATE = True
-                        '''
-                    if SH_INJECTION:
-                        print ("Ataque de sessão")
+                        _xss(TARGET_URL, TIMOUT, VERBOSE, HTTP_ENUMERATION)
                         ACTION_VALIDATE = True
                     if MASS_ACTACK:
                         print ("Atribuição em massa")
                         ACTION_VALIDATE = True
-                    if WORDPRESS:
-                        ACTION_VALIDATE = True
-                        if PLUGIN_NAME:
-                            ## usuário passou o nome de plugin a verificar pelas falhas
-                            print()
-                        else:
-                            print(color.orange+"[!][", datetime.now() ,"]  Aviso: Não foi passada o nome do plugin, o processo para a detenção dos tipos no alvo pode levar muito tempo."+color.end, end='') 
-                            USER_CHOISE = str(input(" Deseja continuar? (s/n):")) 
-                            if USER_CHOISE.lower() == 's':
-                                print("Usuário escolheu o caminho longo")
-                            if USER_CHOISE.lower() == 'n':
-                                print(color.info_1+color.red_0+color.info_2+"[", datetime.now() ,"]  Aviso:"+color.end+color.orange+" Saindo... "+color.end)
-                                quit()
                     if ACTION_VALIDATE == False:
                         print(color.red+"[!][", datetime.now() ,"] Erro: Modo de Ação não detectado, execute"+color.cian+" [compilador] spider [-h] " +color.red+ "para ver os modos a usar com o spider"+color.end)
                         exitTheProgram()
@@ -183,5 +154,5 @@ try:
         exitTheProgram()
         #logging.error('Import Module Error')
 except KeyboardInterrupt as e:
-    print(color.red+"[!][", datetime.now() ,"] Erro: Interrupção pela parte do usuário"+color.end)
+    print(color.white+"\n[!][", datetime.now() ,"] Interrupção pela parte do usuário"+color.end)
     exitTheProgram()   
