@@ -38,7 +38,7 @@ def avaregeTime(url):
             values.append(int(req.elapsed.total_seconds()))
             i = i + 1
         except requests.exceptions.RequestException as e:
-            print(color.red+"[!][",datetime.now(),"]  Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o Web master."+color.end)
+            print(color.red+"[!][",datetime.now(),"]   Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o Web master."+color.end)
             quit()
     media_requisicao = sum(values) / float(len(values))
     return media_requisicao
@@ -66,7 +66,7 @@ def checkPythonVersion():
     if str(PYTHON_VERSION) in  version[1]:
         pass
     else:
-        print(color.red+"[!][", datetime.now(),"] Erro: versão de python incopatível, o Web Spider só pode ser executado  em versões IGUAL ou MAIOR que 3."+color.end)
+        print(color.red+"[!][", datetime.now(),"]  Erro: versão de python incopatível, o Web Spider só pode ser executado  em versões IGUAL ou MAIOR que 3."+color.end)
         exitTheProgram()
     
 def checkURLIntegrity(url):
@@ -74,10 +74,10 @@ def checkURLIntegrity(url):
     try:
         req = requests.get(url=url)
     except requests.exceptions.RequestException :
-        print(color.red+"[!][", datetime.now() ,"] Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o  Web master."+color.end)
+        print(color.red+"[!][", datetime.now() ,"]  Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o  Web master."+color.end)
         exitTheProgram()
     if req.status_code == 404:
-        print(color.red+"[!][", datetime.now(),"]  Erro: não foi possíveel verificar a integridade do alvo..."+color.end)
+        print(color.red+"[!][", datetime.now(),"]   Erro: não foi possíveel verificar a integridade do alvo..."+color.end)
         exitTheProgram()
     else:
         print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Alvo intégro")

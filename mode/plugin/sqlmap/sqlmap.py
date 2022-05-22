@@ -43,7 +43,7 @@ try:
 
     from lib.core.data import logger
 
-    from lib.core.common import banner
+    #from lib.core.common import banner
     from lib.core.common import checkIntegrity
     from lib.core.common import checkPipedInput
     from lib.core.common import createGithubIssue
@@ -84,7 +84,7 @@ try:
     from lib.parse.cmdline import cmdLineParser
     from lib.utils.crawler import crawl
 except KeyboardInterrupt:
-    errMsg = "user aborted"
+    errMsg = "interrupção da parte do usuário"
 
     if "logger" in globals():
         logger.critical(errMsg)
@@ -141,7 +141,7 @@ def main():
         resolveCrossReferences()
         checkEnvironment()
         setPaths(modulePath())
-        banner()
+        #banner()
 
         # Store original command line options for possible later restoration
         args = cmdLineParser()
@@ -163,8 +163,8 @@ def main():
             setRestAPILog()
 
         conf.showTime = True
-        dataToStdout("[!] legal disclaimer: %s\n\n" % LEGAL_DISCLAIMER, forceOutput=True)
-        dataToStdout("[*] starting @ %s\n\n" % time.strftime("%X /%Y-%m-%d/"), forceOutput=True)
+       # dataToStdout("[!] legal disclaimer: %s\n\n" % LEGAL_DISCLAIMER, forceOutput=True)
+        #dataToStdout("[*] starting @ %s\n\n" % time.strftime("%X /%Y-%m-%d/"), forceOutput=True)
 
         init()
 
@@ -508,8 +508,8 @@ def main():
             warnMsg = "your sqlmap version is outdated"
             logger.warn(warnMsg)
 
-        if conf.get("showTime"):
-            dataToStdout("\n[*] ending @ %s\n\n" % time.strftime("%X /%Y-%m-%d/"), forceOutput=True)
+        #if conf.get("showTime"):
+          #  dataToStdout("\n[*] ending @ %s\n\n" % time.strftime("%X /%Y-%m-%d/"), forceOutput=True)
 
         kb.threadException = True
 

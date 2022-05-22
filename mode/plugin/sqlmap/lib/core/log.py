@@ -51,8 +51,10 @@ try:
                         else:
                             reset = self.reset
                         message = message.replace(level, ''.join((self.csi, ';'.join(params), 'm', level, reset)), 1)
+                        
+                        
 
-                        match = re.search(r"\A\s*\[([\d:]+)\]", message)  # time
+                        match =  re.search(r"\A\s*\[([\d:]+)\]", message)  # time
                         if match:
                             time = match.group(1)
                             message = message.replace(time, ''.join((self.csi, str(self.color_map["cyan"] + 30), 'm', time, self._reset(message))), 1)
@@ -103,13 +105,13 @@ try:
         LOGGER_HANDLER = logging.StreamHandler(sys.stdout)
     else:
         LOGGER_HANDLER = _ColorizingStreamHandler(sys.stdout)
-        LOGGER_HANDLER.level_map[logging.getLevelName("PAYLOAD")] = (None, "cyan", False)
-        LOGGER_HANDLER.level_map[logging.getLevelName("TRAFFIC OUT")] = (None, "magenta", False)
+        LOGGER_HANDLER.level_map[logging.getLevelName("PAYLOAD")] = (None, "cian", False)
+        LOGGER_HANDLER.level_map[logging.getLevelName("TRAFFIC OUT")] = ("magenta", "magenta", False)
         LOGGER_HANDLER.level_map[logging.getLevelName("TRAFFIC IN")] = ("magenta", None, False)
 except ImportError:
     LOGGER_HANDLER = logging.StreamHandler(sys.stdout)
 
-FORMATTER = logging.Formatter("\r[%(asctime)s] [%(levelname)s] %(message)s", "%H:%M:%S")
+FORMATTER = logging.Formatter("\r[%(asctime)s] [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S")
 
 LOGGER_HANDLER.setFormatter(FORMATTER)
 LOGGER.addHandler(LOGGER_HANDLER)

@@ -1499,8 +1499,11 @@ def checkConnection(suppressOutput=False):
                 raise SqlmapDataException(errMsg)
 
     if not suppressOutput and not conf.dummy and not conf.offline:
-        infoMsg = "testing connection to the target URL"
-        logger.info(infoMsg)
+        pass
+        ################################################################
+        # linhas comentadas....
+        #infoMsg = "testing connection to the target URL"
+        #logger.info(infoMsg)
 
     try:
         kb.originalPageTime = time.time()

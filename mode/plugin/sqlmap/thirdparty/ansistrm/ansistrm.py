@@ -164,7 +164,7 @@ class ColorizingStreamHandler(logging.StreamHandler):
                 message = "%s%s" % (prefix, ''.join((self.csi, ';'.join(params),
                                    'm', message, self.reset)))
 
-        return message
+        return '[+]',message
 
     def format(self, record):
         message = logging.StreamHandler.format(self, record)
