@@ -29,3 +29,4 @@ def dump_tables(url):
         print("["+color.orange+"+][", datetime.now(),"]  Erro: não foi encontrado nenhum parâmetro GET(id) ou algo similar para a execução do teste "+color.end)
     exitTheProgram()  
     
+ 
