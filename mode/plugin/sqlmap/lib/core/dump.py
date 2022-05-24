@@ -166,27 +166,27 @@ class Dump(object):
         self.string("banner", data, content_type=CONTENT_TYPE.BANNER)
 
     def currentUser(self, data):
-        self.string("current user", data, content_type=CONTENT_TYPE.CURRENT_USER)
+        self.string("usuário actual do banco de dados", data, content_type=CONTENT_TYPE.CURRENT_USER)
 
     def currentDb(self, data):
         if Backend.getIdentifiedDbms() in (DBMS.ORACLE, DBMS.PGSQL, DBMS.HSQLDB, DBMS.H2, DBMS.MONETDB, DBMS.VERTICA, DBMS.CRATEDB, DBMS.CACHE, DBMS.FRONTBASE):
-            self.string("current database (equivalent to schema on %s)" % Backend.getIdentifiedDbms(), data, content_type=CONTENT_TYPE.CURRENT_DB)
+            self.string("banco de dados actual (equivalente a schema em %s)" % Backend.getIdentifiedDbms(), data, content_type=CONTENT_TYPE.CURRENT_DB)
         elif Backend.getIdentifiedDbms() in (DBMS.ALTIBASE, DBMS.DB2, DBMS.MIMERSQL, DBMS.MAXDB, DBMS.VIRTUOSO):
-            self.string("current database (equivalent to owner on %s)" % Backend.getIdentifiedDbms(), data, content_type=CONTENT_TYPE.CURRENT_DB)
+            self.string("banco de dados actual (equivalente ao proprietário em %s)" % Backend.getIdentifiedDbms(), data, content_type=CONTENT_TYPE.CURRENT_DB)
         else:
-            self.string("current database", data, content_type=CONTENT_TYPE.CURRENT_DB)
+            self.string("banco de dados actual", data, content_type=CONTENT_TYPE.CURRENT_DB)
 
     def hostname(self, data):
         self.string("hostname", data, content_type=CONTENT_TYPE.HOSTNAME)
 
     def dba(self, data):
-        self.string("current user is DBA", data, content_type=CONTENT_TYPE.IS_DBA)
+        self.string("DBA do usuário actual é ", data, content_type=CONTENT_TYPE.IS_DBA)
 
     def users(self, users):
-        self.lister("database management system users", users, content_type=CONTENT_TYPE.USERS)
+        self.lister("usuarios esponsáveis do SGBD", users, content_type=CONTENT_TYPE.USERS)
 
     def statements(self, statements):
-        self.lister("SQL statements", statements, content_type=CONTENT_TYPE.STATEMENTS)
+        self.lister("teses SQL", statements, content_type=CONTENT_TYPE.STATEMENTS)
 
     def userSettings(self, header, userSettings, subHeader, content_type=None):
         self._areAdmins = set()
@@ -213,7 +213,7 @@ class Dump(object):
                 stringSettings = " [%d]:" % len(settings)
 
             if user in self._areAdmins:
-                self._write("[*] %s (administrator)%s" % (user, stringSettings))
+                self._write("[*] %s (administrador)%s" % (user, stringSettings))
             else:
                 self._write("[*] %s%s" % (user, stringSettings))
 
@@ -227,7 +227,7 @@ class Dump(object):
             self.singleString("")
 
     def dbs(self, dbs):
-        self.lister("available databases", dbs, content_type=CONTENT_TYPE.DBS)
+        self.lister("Banco de dados disponíveis", dbs, content_type=CONTENT_TYPE.DBS)
 
     def dbTables(self, dbTables):
         if isinstance(dbTables, dict) and len(dbTables) > 0:
@@ -248,12 +248,12 @@ class Dump(object):
             for db, tables in dbTables.items():
                 tables = sorted(filter(None, tables))
 
-                self._write("Database: %s" % unsafeSQLIdentificatorNaming(db) if db and METADB_SUFFIX not in db else "<current>")
+                self._write("Banco de dados: %s" % unsafeSQLIdentificatorNaming(db) if db and METADB_SUFFIX not in db else "<actual>")
 
                 if len(tables) == 1:
-                    self._write("[1 table]")
+                    self._write("[uma tabela]")
                 else:
-                    self._write("[%d tables]" % len(tables))
+                    self._write("[%d tabelas]" % len(tables))
 
                 self._write("+%s+" % lines)
 
@@ -267,7 +267,7 @@ class Dump(object):
 
                 self._write("+%s+\n" % lines)
         elif dbTables is None or len(dbTables) == 0:
-            self.singleString("No tables found", content_type=CONTENT_TYPE.TABLES)
+            self.singleString("Não foi encontrado tabelas", content_type=CONTENT_TYPE.TABLES)
         else:
             self.string("tables", dbTables, content_type=CONTENT_TYPE.TABLES)
 
@@ -303,12 +303,12 @@ class Dump(object):
                         maxlength2 = max(maxlength2, len("TYPE"))
                         lines2 = "-" * (maxlength2 + 2)
 
-                    self._write("Database: %s\nTable: %s" % (unsafeSQLIdentificatorNaming(db) if db and METADB_SUFFIX not in db else "<current>", unsafeSQLIdentificatorNaming(table)))
+                    self._write("Banco de dados: %s\nTabela: %s" % (unsafeSQLIdentificatorNaming(db) if db and METADB_SUFFIX not in db else "<actual>", unsafeSQLIdentificatorNaming(table)))
 
                     if len(columns) == 1:
-                        self._write("[1 column]")
+                        self._write("[uma coluna]")
                     else:
-                        self._write("[%d columns]" % len(columns))
+                        self._write("[%d colunas]" % len(columns))
 
                     if colType is not None:
                         self._write("+%s+%s+" % (lines1, lines2))
@@ -358,12 +358,12 @@ class Dump(object):
                         maxlength1 = max(maxlength1, getConsoleLength(getUnicode(table)))
 
             for db, counts in dbTables.items():
-                self._write("Database: %s" % unsafeSQLIdentificatorNaming(db) if db and METADB_SUFFIX not in db else "<current>")
+                self._write("Banco de dados: %s" % unsafeSQLIdentificatorNaming(db) if db and METADB_SUFFIX not in db else "<corrente>")
 
                 lines1 = "-" * (maxlength1 + 2)
-                blank1 = " " * (maxlength1 - len("Table"))
+                blank1 = " " * (maxlength1 - len("Tabela"))
                 lines2 = "-" * (maxlength2 + 2)
-                blank2 = " " * (maxlength2 - len("Entries"))
+                blank2 = " " * (maxlength2 - len("Entradas"))
 
                 self._write("+%s+%s+" % (lines1, lines2))
                 self._write("| Table%s | Entries%s |" % (blank1, blank2))
@@ -387,7 +387,7 @@ class Dump(object):
 
                 self._write("+%s+%s+\n" % (lines1, lines2))
         else:
-            logger.error("unable to retrieve the number of entries for any table")
+            logger.error("Não foi possível retornar o número de tabelas")
 
     def dbTableValues(self, tableValues):
         replication = None
@@ -487,7 +487,7 @@ class Dump(object):
                 separator += "+%s" % lines
 
         separator += "+"
-        self._write("Database: %s\nTable: %s" % (unsafeSQLIdentificatorNaming(db) if db and METADB_SUFFIX not in db else "<current>", unsafeSQLIdentificatorNaming(table)))
+        self._write("Banco de dados: %s\nTabela: %s" % (unsafeSQLIdentificatorNaming(db) if db and METADB_SUFFIX not in db else "<corrente>", unsafeSQLIdentificatorNaming(table)))
 
         if conf.dumpFormat == DUMP_FORMAT.SQLITE:
             cols = []
@@ -531,9 +531,9 @@ class Dump(object):
             dataToDumpFile(dumpFP, "\n</head>\n<body>\n<table>\n<thead>\n<tr>\n")
 
         if count == 1:
-            self._write("[1 entry]")
+            self._write("[uma entrada]")
         else:
-            self._write("[%d entries]" % count)
+            self._write("[%d entradas]" % count)
 
         self._write(separator)
 
@@ -610,7 +610,7 @@ class Dump(object):
 
                                 _ = re.sub(r"[^\w]", UNSAFE_DUMP_FILEPATH_REPLACEMENT, normalizeUnicode(unsafeSQLIdentificatorNaming(column)))
                                 filepath = os.path.join(dumpDbPath, "%s-%d.bin" % (_, randomInt(8)))
-                                warnMsg = "writing binary ('%s') content to file '%s' " % (mimetype, filepath)
+                                warnMsg = "escrevendo conteúdos binários ('%s') em  '%s' " % (mimetype, filepath)
                                 logger.warn(warnMsg)
 
                                 with openFile(filepath, "w+b", None) as f:

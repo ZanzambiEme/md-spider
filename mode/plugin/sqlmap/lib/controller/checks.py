@@ -1591,16 +1591,13 @@ def checkConnection(suppressOutput=False):
 
     if conf.cj and not conf.cookie and not any(_[0] == HTTP_HEADER.COOKIE for _ in conf.httpHeaders) and not conf.dropSetCookie:
         candidate = DEFAULT_COOKIE_DELIMITER.join("%s=%s" % (_.name, _.value) for _ in conf.cj)
-
         message = "you have not declared cookie(s), while "
         message += "server wants to set its own ('%s'). " % re.sub(r"(=[^=;]{10}[^=;])[^=;]+([^=;]{10})", r"\g<1>...\g<2>", candidate)
         message += "Do you want to use those [Y/n] "
         if readInput(message, default='Y', boolean=True):
             kb.mergeCookies = True
             conf.httpHeaders.append((HTTP_HEADER.COOKIE, candidate))
-
     return True
-
 def checkInternet():
     content = Request.getPage(url=CHECK_INTERNET_ADDRESS, checking=True)[0]
     return CHECK_INTERNET_VALUE in (content or "")

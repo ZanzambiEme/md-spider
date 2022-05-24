@@ -135,7 +135,6 @@ def main():
     """
     Main function of sqlmap when running from command line.
     """
-
     try:
         dirtyPatches()
         resolveCrossReferences()
@@ -224,7 +223,7 @@ def main():
 
     except SqlmapUserQuitException:
         if not conf.batch:
-            errMsg = "user quit"
+            errMsg = "sinal de Saída"
             logger.error(errMsg)
 
     except (SqlmapSilentQuitException, bdb.BdbQuit):
@@ -247,7 +246,7 @@ def main():
     except EOFError:
         print()
 
-        errMsg = "exit"
+        errMsg = "saida"
         logger.error(errMsg)
 
     except SystemExit as ex:
@@ -550,7 +549,7 @@ def main():
         while threading.active_count() > 1 and (time.time() - _) > THREAD_FINALIZATION_TIMEOUT:
             time.sleep(0.01)
 
-        if cmdLineOptions.get("sqlmapShell"):
+        if cmdLineOptions.get("Shellsqlmap"):
             cmdLineOptions.clear()
             conf.clear()
             kb.clear()
