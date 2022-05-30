@@ -49,7 +49,7 @@ from lib.request import inject
 def _addPageTextWords():
     wordsList = []
 
-    infoMsg = "adding words used on web page to the check list"
+    infoMsg = "criando um wordlist com base nas palavras da página"
     logger.info(infoMsg)
     pageWords = getPageWordSet(kb.originalPage)
 
@@ -64,11 +64,11 @@ def _addPageTextWords():
 @stackedmethod
 def tableExists(tableFile, regex=None):
     if kb.choices.tableExists is None and not any(_ for _ in kb.injection.data if _ not in (PAYLOAD.TECHNIQUE.TIME, PAYLOAD.TECHNIQUE.STACKED)) and not conf.direct:
-        warnMsg = "it's not recommended to use '%s' and/or '%s' " % (PAYLOAD.SQLINJECTION[PAYLOAD.TECHNIQUE.TIME], PAYLOAD.SQLINJECTION[PAYLOAD.TECHNIQUE.STACKED])
-        warnMsg += "for common table existence check"
+        warnMsg = "não é recomendado usar '%s' e/ou '%s' " % (PAYLOAD.SQLINJECTION[PAYLOAD.TECHNIQUE.TIME], PAYLOAD.SQLINJECTION[PAYLOAD.TECHNIQUE.STACKED])
+        warnMsg += "para checagem de tabelas existente"
         logger.warn(warnMsg)
 
-        message = "are you sure you want to continue? [y/N] "
+        message = "tens certeza deque dejesas continuar? [y/N] "
         kb.choices.tableExists = readInput(message, default='N', boolean=True)
 
         if not kb.choices.tableExists:
@@ -87,16 +87,16 @@ def tableExists(tableFile, regex=None):
     if conf.db and Backend.getIdentifiedDbms() in UPPER_CASE_DBMSES:
         conf.db = conf.db.upper()
 
-    message = "which common tables (wordlist) file do you want to use?\n"
-    message += "[1] default '%s' (press Enter)\n" % tableFile
-    message += "[2] custom"
+    message = "qual das tabelas comuns de wordlist/ficheiro desejas usar?\n"
+    message += "[1] padrão '%s' (pressione Enter)\n" % tableFile
+    message += "[2] customizar"
     choice = readInput(message, default='1')
 
     if choice == '2':
-        message = "what's the custom common tables file location?\n"
+        message = "qual é a localização da tabelas comun customizadas?\n"
         tableFile = readInput(message) or tableFile
 
-    infoMsg = "performing table existence using items from '%s'" % tableFile
+    infoMsg = "executando  table existence usando items provienentes de '%s'" % tableFile
     logger.info(infoMsg)
 
     tables = getFileItems(tableFile, lowercase=Backend.getIdentifiedDbms() in (DBMS.ACCESS,), unique=True)
@@ -105,7 +105,7 @@ def tableExists(tableFile, regex=None):
 
     for conf.db in (conf.db.split(',') if conf.db else [conf.db]):
         if conf.db and METADB_SUFFIX not in conf.db:
-            infoMsg = "checking database '%s'" % conf.db
+            infoMsg = "checando banco de dados '%s'" % conf.db
             logger.info(infoMsg)
 
         threadData = getCurrentThreadData()
@@ -166,9 +166,9 @@ def tableExists(tableFile, regex=None):
         dataToStdout("\n")
 
         if not threadData.shared.files:
-            warnMsg = "no table(s) found"
+            warnMsg = "não foi encontrado tabela(s) "
             if conf.db:
-                warnMsg += " for database '%s'" % conf.db
+                warnMsg += " para o banco de dados '%s'" % conf.db
             logger.warn(warnMsg)
         else:
             for item in threadData.shared.files:
@@ -192,7 +192,7 @@ def columnExists(columnFile, regex=None):
         warnMsg += "for common column existence check"
         logger.warn(warnMsg)
 
-        message = "are you sure you want to continue? [y/N] "
+        message = "tem certeza que continuas continuar? [y/N] "
         kb.choices.columnExists = readInput(message, default='N', boolean=True)
 
         if not kb.choices.columnExists:
@@ -267,7 +267,7 @@ def columnExists(columnFile, regex=None):
 
                 if conf.verbose in (1, 2) and not conf.api:
                     clearConsoleLine(True)
-                    infoMsg = "[%s] [INFO] retrieved: %s\n" % (time.strftime("%X"), unsafeSQLIdentificatorNaming(column))
+                    infoMsg = "[%s] [INFO] retornado: %s\n" % (time.strftime("%X"), unsafeSQLIdentificatorNaming(column))
                     dataToStdout(infoMsg, True)
 
             if conf.verbose in (1, 2):
@@ -289,7 +289,7 @@ def columnExists(columnFile, regex=None):
     dataToStdout("\n")
 
     if not threadData.shared.files:
-        warnMsg = "no column(s) found"
+        warnMsg = "não foi encontrado nenhuma coluna(s)"
         logger.warn(warnMsg)
     else:
         columns = {}
@@ -323,16 +323,16 @@ def columnExists(columnFile, regex=None):
 def fileExists(pathFile):
     retVal = []
 
-    message = "which common files file do you want to use?\n"
-    message += "[1] default '%s' (press Enter)\n" % pathFile
-    message += "[2] custom"
+    message = "Qual dos ficheiros comum deseja usar?\n"
+    message += "[1] padrão '%s' (pressiona Enter)\n" % pathFile
+    message += "[2] customizar"
     choice = readInput(message, default='1')
 
     if choice == '2':
-        message = "what's the custom common files file location?\n"
+        message = "qual é a localização do ficheiro customizado?\n"
         pathFile = readInput(message) or pathFile
 
-    infoMsg = "checking files existence using items from '%s'" % pathFile
+    infoMsg = "checando a existência de ficheiro usando item de  '%s'" % pathFile
     logger.info(infoMsg)
 
     paths = getFileItems(pathFile, unique=True)
@@ -377,7 +377,7 @@ def fileExists(pathFile):
 
                 if not conf.api:
                     clearConsoleLine(True)
-                    infoMsg = "[%s] [INFO] retrieved: '%s'\n" % (time.strftime("%X"), path)
+                    infoMsg = "[%s] [INFO] retornado: '%s'\n" % (time.strftime("%X"), path)
                     dataToStdout(infoMsg, True)
 
             if conf.verbose in (1, 2):

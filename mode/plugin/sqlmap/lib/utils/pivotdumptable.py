@@ -54,7 +54,7 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
         count = int(count)
 
     if count == 0:
-        infoMsg = "table '%s' appears to be empty" % unsafeSQLIdentificatorNaming(table)
+        infoMsg = "tabela '%s' parece estar vazio" % unsafeSQLIdentificatorNaming(table)
         logger.info(infoMsg)
 
         for column in colList:
@@ -75,8 +75,8 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
     if conf.pivotColumn:
         for _ in colList:
             if re.search(r"(.+\.)?%s" % re.escape(conf.pivotColumn), _, re.I):
-                infoMsg = "using column '%s' as a pivot " % conf.pivotColumn
-                infoMsg += "for retrieving row data"
+                infoMsg = "usando coluna '%s' como pivot " % conf.pivotColumn
+                infoMsg += "para retornar dados row"
                 logger.info(infoMsg)
 
                 colList.remove(_)
@@ -86,14 +86,14 @@ def pivotDumpTable(table, colList, count=None, blind=True, alias=None):
                 break
 
         if not validPivotValue:
-            warnMsg = "column '%s' not " % conf.pivotColumn
-            warnMsg += "found in table '%s'" % table
+            warnMsg = "coluna'%s' não " % conf.pivotColumn
+            warnMsg += "encontrada na tabela '%s'" % table
             logger.warn(warnMsg)
 
     if not validPivotValue:
         for column in colList:
-            infoMsg = "fetching number of distinct "
-            infoMsg += "values for column '%s'" % column.replace(("%s." % alias) if alias else "", "")
+            infoMsg = "buscando número distinto "
+            infoMsg += "de valores na coluna '%s'" % column.replace(("%s." % alias) if alias else "", "")
             logger.info(infoMsg)
 
             query = dumpNode.count2 % (column, table)

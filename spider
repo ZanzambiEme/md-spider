@@ -7,7 +7,7 @@ from core.banner import WELCOME_BANNER
 print('\t'+color.cian+random.choice(WELCOME_BANNER).center(10)+color.end)
 
 '''
-Checando a versão do python, porên não funconando ainda como deveria
+Checando a versão do python, porên não funcionando ainda como deveria
 '''
 try:
     import concurrent
@@ -74,6 +74,8 @@ try:
         parse.add_argument('-d', '--dump_tables', help='Usando esse flag, o Spider irá enumerar do servidor do alvo todos oos bancos de dados bem como as suas tabelas', action='store_true')
         parse.add_argument('-dT', '--dump_all', help='Usando esse flag, o Spider irá enumerar todas as tables que o alvo contêm', action='store_true')
         parse.add_argument('--auth_bypass', help='O Spider irá tentaar fazer um ultrapassagem de autenticação no alo', action='store_true')
+        parse.add_argument('-log', help='visualização dos logs do web spider ', action='store_true')
+        parse.add_argument('-logj', help='visualização dos logs Json do web spider ', action='store_true')
         
         mode = parse.add_argument_group(title='Modos de Detenção')  ## modos de de detenção []
         #mode.add_argument('-html', help='injeção html (e.g: python3 spider -u alvo -t 4 -html --proxy 0.0.0.0 )',action='store_true',dest='html')
@@ -101,6 +103,9 @@ try:
             DUMP_TABLES      = args.dump_tables
             DUMP_ALL = args.dump_all
             AUTH_BYPASS = args.auth_bypass
+            SPIDER_LOG = args.log
+            SPIDER_LOGJ = args.logj
+            
            #COOKIE    = args.cookie
             #TAMPER    = args.tamper
             SHELL     = args.shell
@@ -123,6 +128,15 @@ try:
             LARAVEL     = args.laravel              #
             NODEJS      = args.nodejs               #
             #########################################
+            if SPIDER_LOG:
+                import os
+                os.system("nano ./logs/WebSpider.log")
+                exitTheProgram()
+            if SPIDER_LOGJ:
+                import os
+                os.system("nano ./logs/logs.json")
+                exitTheProgram()
+                        
             if TARGET_URL:
         
                 import core.utils as utilsfucntions
@@ -132,7 +146,7 @@ try:
                 from mode.xss import _xss
                 from mode.sql import _sqlInjection
                 from mode.xxe import  _xxe
-                
+                  
                 if(utilsfucntions.urlValidator(TARGET_URL) == True):
                     if XML_INJECTION:
                         _xxe(TARGET_URL,'', '', VERBOSE, '', '', HTTP_ENUMERATION)

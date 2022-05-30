@@ -104,8 +104,8 @@ def _selectInjection():
         kb.injection = kb.injections[0]
 
     elif len(points) > 1:
-        message = "there were multiple injection points, please select "
-        message += "the one to use for following injections:\n"
+        message = "foi encontrado múltiplos pontos de injeção "
+        message += " por favor selecione um:\n"
 
         points = []
 
@@ -135,7 +135,7 @@ def _selectInjection():
         elif choice == 'Q':
             raise SqlmapUserQuitException
         else:
-            errMsg = "invalid choice"
+            errMsg = "opção inválida"
             raise SqlmapValueException(errMsg)
 
         kb.injection = kb.injections[index]
@@ -159,8 +159,8 @@ def _formatInjection(inj):
                 title = title.replace("columns", "column")
         elif comment:
             vector = "%s%s" % (vector, comment)
-        data += "    Type: %s\n" % PAYLOAD.SQLINJECTION[stype]
-        data += "    Title: %s\n" % title
+        data += "    Tipo: %s\n" % PAYLOAD.SQLINJECTION[stype]
+        data += "    Título: %s\n" % title
         data += "    Payload: %s\n" % urldecode(payload, unsafe="&", spaceplus=(inj.place != PLACE.GET and kb.postSpaceToPlus))
         data += "    Vector: %s\n\n" % vector if conf.verbose > 1 else "\n"
 
@@ -171,10 +171,10 @@ def _showInjections():
         kb.wizardMode = False
 
     if kb.testQueryCount > 0:
-        header = "sqlmap identified the following injection point(s) with "
-        header += "a total of %d HTTP(s) requests" % kb.testQueryCount
+        header = "foi identificado os seguintes pontos de injeção "
+        header += "num total de %d requisições HTTP(s) " % kb.testQueryCount
     else:
-        header = "sqlmap resumed the following injection point(s) from stored session"
+        header = "foi resumida os seguintes pontos de injeção restaurado de sessões anteriores"
 
     if conf.api:
         conf.dumper.string("", {"url": conf.url, "query": conf.parameters.get(PLACE.GET), "data": conf.parameters.get(PLACE.POST)}, content_type=CONTENT_TYPE.TARGET)
@@ -197,7 +197,7 @@ def _randomFillBlankFields(value):
     retVal = value
 
     if extractRegexResult(EMPTY_FORM_FIELDS_REGEX, value):
-        message = "do you want to fill blank fields with random values? [Y/n] "
+        message = "desejas preencher campos vazios com valores randómicos? [Y/n] "
 
         if readInput(message, default='Y', boolean=True):
             for match in re.finditer(EMPTY_FORM_FIELDS_REGEX, retVal):
@@ -260,7 +260,7 @@ def _saveToResultsFile():
 
         conf.resultsFP.flush()
     except IOError as ex:
-        errMsg = "unable to write to the results file '%s' ('%s'). " % (conf.resultsFile, getSafeExString(ex))
+        errMsg = "não foi posssível escrever no ficheiro de resultado '%s' ('%s'). " % (conf.resultsFile, getSafeExString(ex))
         raise SqlmapSystemException(errMsg)
 
 @stackedmethod
@@ -301,7 +301,7 @@ def start():
 
         try:
             if conf.checkInternet:
-                infoMsg = "checking for Internet connection"
+                infoMsg = "testando pela a conexão de internet"
                 logger.info(infoMsg)
 
                 if not checkInternet():
@@ -427,7 +427,7 @@ def start():
                     else:
                         pass
 
-                    infoMsg = "testing URL '%s'" % targetUrl
+                    infoMsg = "testando URL '%s'" % targetUrl
                     logger.info(infoMsg)
 
             setupTargetEnv()
@@ -514,7 +514,7 @@ def start():
                         if paramKey in kb.testedParams:
                             testSqlInj = False
 
-                            infoMsg = "skipping previously processed %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
+                            infoMsg = "pulando parâmetros processado anteriormente %s  '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
                             logger.info(infoMsg)
 
                         elif any(_ in conf.testParameter for _ in (parameter, removePostHintPrefix(parameter))):
@@ -541,30 +541,30 @@ def start():
                         elif conf.csrfToken and re.search(conf.csrfToken, parameter, re.I):
                             testSqlInj = False
 
-                            infoMsg = "skipping anti-CSRF token parameter '%s'" % parameter
+                            infoMsg = "pulando parâmetros anti-CSRF'%s'" % parameter
                             logger.info(infoMsg)
 
                         # Ignore session-like parameters for --level < 4
                         elif conf.level < 4 and (parameter.upper() in IGNORE_PARAMETERS or any(_ in parameter.lower() for _ in CSRF_TOKEN_PARAMETER_INFIXES) or parameter.upper().startswith(GOOGLE_ANALYTICS_COOKIE_PREFIX)):
                             testSqlInj = False
 
-                            infoMsg = "ignoring %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
+                            infoMsg = "ignoring %s parameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
                             logger.info(infoMsg)
 
                         elif PAYLOAD.TECHNIQUE.BOOLEAN in conf.technique or conf.skipStatic:
                             check = checkDynParam(place, parameter, value)
 
                             if not check:
-                                warnMsg = "%sparameter '%s' does not appear to be dynamic" % ("%s " % paramType if paramType != parameter else "", parameter)
+                                warnMsg = "o parâmetro %s '%s' não parece ser dinámico" % ("%s " % paramType if paramType != parameter else "", parameter)
                                 logger.warn(warnMsg)
 
                                 if conf.skipStatic:
-                                    infoMsg = "skipping static %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
+                                    infoMsg = "pulando parâmetro estático %s '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
                                     logger.info(infoMsg)
 
                                     testSqlInj = False
                             else:
-                                infoMsg = "%sparameter '%s' appears to be dynamic" % ("%s " % paramType if paramType != parameter else "", parameter)
+                                infoMsg = "parâmetro %s '%s' parece ser dinámico" % ("%s " % paramType if paramType != parameter else "", parameter)
                                 logger.info(infoMsg)
 
                         kb.testedParams.add(paramKey)
@@ -583,7 +583,7 @@ def start():
                                         logger.info(infoMsg)
                                         continue
 
-                                infoMsg = "testing for SQL injection on %sparameter '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
+                                infoMsg = "testando Injeção SQL no parâmetro %s '%s'" % ("%s " % paramType if paramType != parameter else "", parameter)
                                 logger.info(infoMsg)
 
                                 injection = checkSqlInjection(place, parameter, value)
@@ -602,8 +602,8 @@ def start():
                                         if not proceed:
                                             break
 
-                                        msg = "%sparameter '%s' " % ("%s " % injection.place if injection.place != injection.parameter else "", injection.parameter)
-                                        msg += "is vulnerable. Do you want to keep testing the others (if any)? [y/N] "
+                                        msg = "parametro %s '%s' " % ("%s " % injection.place if injection.place != injection.parameter else "", injection.parameter)
+                                        msg += "é vulnerável. Desejas continuar o teste com outros ? [y/N] "
 
                                         if not readInput(msg, default='N', boolean=True):
                                             proceed = False
@@ -620,8 +620,8 @@ def start():
 
             if len(kb.injections) == 0 or (len(kb.injections) == 1 and kb.injections[0].place is None):
                 if kb.vainRun and not conf.multipleTargets:
-                    errMsg = "no parameter(s) found for testing in the provided data "
-                    errMsg += "(e.g. GET parameter 'id' in 'www.site.com/index.php?id=1')"
+                    errMsg = "nenhum parâmetro foi encontrado nos dados providenciado  "
+                    errMsg += "(e.g. parâmetro GET 'id' em 'www.site.com/index.php?id=1')"
                     if kb.originalPage:
                         advice = []
                         if not conf.forms and re.search(r"<form", kb.originalPage) is not None:
@@ -629,14 +629,14 @@ def start():
                         if not conf.crawlDepth and re.search(r"href=[\"']/?\w", kb.originalPage) is not None:
                             advice.append("--crawl=2")
                         if advice:
-                            errMsg += ". You are advised to rerun with '%s'" % ' '.join(advice)
+                            errMsg += ". Isso deve-se provavelmente ao facto de introduzires opções inválidas a questões acima, tenta executar de novo. '%s'" % ' '.join(advice)
                     raise SqlmapNoneDataException(errMsg)
                 else:
-                    errMsg = "all tested parameters do not appear to be injectable."
+                    errMsg = "todos os parâmetro testados não parecem ser injectáveis."
 
                     if conf.level < 5 or conf.risk < 3:
-                        errMsg += " Try to increase values for '--level'/'--risk' options "
-                        errMsg += "if you wish to perform more tests."
+                        errMsg += " Tenta aumentar valores pra opções  '--level'/'--risk' "
+                        errMsg += "se desejas efectuar mais testes."
 
                     if isinstance(conf.technique, list) and len(conf.technique) < 5:
                         errMsg += " Rerun without providing the option '--technique'."
@@ -673,9 +673,9 @@ def start():
                         errMsg += "does not match exclusively True responses."
 
                     if not conf.tamper:
-                        errMsg += " If you suspect that there is some kind of protection mechanism "
-                        errMsg += "involved (e.g. WAF) maybe you could try to use "
-                        errMsg += "option '--tamper' (e.g. '--tamper=space2comment')"
+                        errMsg += " Se suspeitas que existe um mecanismo de proteção  "
+                        errMsg += " envolvido (e.g. WAF) talvez tentes usar "
+                        errMsg += "opção '--tamper' (e.g. '--tamper=space2comment')"
 
                         if not conf.randomAgent:
                             errMsg += " and/or switch '--random-agent'"
@@ -692,7 +692,7 @@ def start():
 
             if kb.injection.place is not None and kb.injection.parameter is not None:
                 if conf.multipleTargets:
-                    message = "do you want to exploit this SQL injection? [Y/n] "
+                    message = "desejas explorar esta injeção SQL? [Y/n] "
                     condition = readInput(message, default='Y', boolean=True)
                 else:
                     condition = True
@@ -703,7 +703,7 @@ def start():
         except KeyboardInterrupt:
             if kb.lastCtrlCTime and (time.time() - kb.lastCtrlCTime < 1):
                 kb.multipleCtrlC = True
-                raise SqlmapUserQuitException("user aborted (Ctrl+C was pressed multiple times)")
+                raise SqlmapUserQuitException("usuário abortou (Ctrl+C foi precionado diversas vezes)")
 
             kb.lastCtrlCTime = time.time()
 
@@ -752,7 +752,7 @@ def start():
                 logger.warn(warnMsg)
 
     if kb.dataOutputFlag and not conf.multipleTargets:
-        logger.info("fetched data logged to text files under '%s'" % conf.outputPath)
+        logger.info("puchou dados armazenados outrora em '%s'" % conf.outputPath)
 
     if conf.multipleTargets:
         if conf.resultsFile:

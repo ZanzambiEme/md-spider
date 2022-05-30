@@ -2192,28 +2192,28 @@ def _useWizardInterface():
     if not conf.wizard:
         return
 
-    logger.info("starting wizard interface")
+    logger.info("Começando a interface do mdo guiado")
 
     while not conf.url:
-        message = "Please enter full target URL (-u): "
+        message = "Entre  com alvo URL (-u): "
         conf.url = readInput(message, default=None)
 
-    message = "%s data (--data) [Enter for None]: " % ((conf.method if conf.method != HTTPMETHOD.GET else None) or HTTPMETHOD.POST)
+    message = "%s data (--data) [Enter para pular]: " % ((conf.method if conf.method != HTTPMETHOD.GET else None) or HTTPMETHOD.POST)
     conf.data = readInput(message, default=None)
 
     if not (any('=' in _ for _ in (conf.url, conf.data)) or '*' in conf.url):
-        warnMsg = "no GET and/or %s parameter(s) found for testing " % ((conf.method if conf.method != HTTPMETHOD.GET else None) or HTTPMETHOD.POST)
-        warnMsg += "(e.g. GET parameter 'id' in 'http://www.site.com/vuln.php?id=1'). "
+        warnMsg = "não foi passa nenhm parâmetro GET e/ou %s para teste " % ((conf.method if conf.method != HTTPMETHOD.GET else None) or HTTPMETHOD.POST)
+        warnMsg += "(e.g. GET parametro 'id' em 'http://www.site.com/vuln.php?id=1'). "
         if not conf.crawlDepth and not conf.forms:
-            warnMsg += "Will search for forms"
+            warnMsg += "Procurando pelo formulários"
             conf.forms = True
         logger.warn(warnMsg)
 
     choice = None
 
     while choice is None or choice not in ("", "1", "2", "3"):
-        message = "Injection difficulty (--level/--risk). Please choose:\n"
-        message += "[1] Normal (default)\n[2] Medium\n[3] Hard"
+        message = "Dificuldade de injeção (--level/--risk). Por favor escolha:\n"
+        message += "[1] Normal (padrão)\n[2] Média\n[3] Difícil"
         choice = readInput(message, default='1')
 
         if choice == '2':
@@ -2230,8 +2230,8 @@ def _useWizardInterface():
         choice = None
 
         while choice is None or choice not in ("", "1", "2", "3"):
-            message = "Enumeration (--banner/--current-user/etc). Please choose:\n"
-            message += "[1] Basic (default)\n[2] Intermediate\n[3] All"
+            message = "Enumeração(--banner/--current-user/etc). Por favor escolha:\n"
+            message += "[1] Basico (padrão)\n[2] Intermediário\n[3] Todos"
             choice = readInput(message, default='1')
 
             if choice == '2':
@@ -2244,13 +2244,13 @@ def _useWizardInterface():
             for _ in options:
                 conf.__setitem__(_, True)
 
-    logger.debug("muting sqlmap.. it will do the magic for you")
+    logger.debug("silenciando o sqlmap.. fazendo a magia pra si")
     conf.verbose = 0
 
     conf.batch = True
     conf.threads = 4
 
-    dataToStdout("\nsqlmap is running, please wait..\n\n")
+    dataToStdout("\nrodando o sqlmap, por favor espere..\n\n")
 
     kb.wizardMode = True
 
@@ -2263,12 +2263,12 @@ def _saveConfig():
     if not conf.saveConfig:
         return
 
-    debugMsg = "saving command line options to a sqlmap configuration INI file"
+    debugMsg = "salvando as linha de comandos no arquivo de configuração sqlmap INI "
     logger.debug(debugMsg)
 
     saveConfig(conf, conf.saveConfig)
 
-    infoMsg = "saved command line options to the configuration file '%s'" % conf.saveConfig
+    infoMsg = "comando salvos em  '%s'" % conf.saveConfig
     logger.info(infoMsg)
 
 def setVerbosity():

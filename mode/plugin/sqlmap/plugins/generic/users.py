@@ -63,7 +63,7 @@ class Users(object):
         kb.data.cachedUsersRoles = {}
 
     def getCurrentUser(self):
-        infoMsg = "fetching current user"
+        infoMsg = "buscando o usuário actual do banco de dados"
         logger.info(infoMsg)
 
         query = queries[Backend.getIdentifiedDbms()].current_user.query
@@ -74,7 +74,7 @@ class Users(object):
         return kb.data.currentUser
 
     def isDba(self, user=None):
-        infoMsg = "testing if current user is DBA"
+        infoMsg = "testando se usuário actual é um DBA"
         logger.info(infoMsg)
 
         query = None
@@ -97,7 +97,7 @@ class Users(object):
         return kb.data.isDba
 
     def getUsers(self):
-        infoMsg = "fetching database users"
+        infoMsg = "buscando usuários do banco de dados"
         logger.info(infoMsg)
 
         rootQuery = queries[Backend.getIdentifiedDbms()].users
@@ -123,7 +123,7 @@ class Users(object):
                         kb.data.cachedUsers.append(value)
 
         if not kb.data.cachedUsers and isInferenceAvailable() and not conf.direct:
-            infoMsg = "fetching number of database users"
+            infoMsg = "buscando a quantidade de usuários do banco de dados"
             logger.info(infoMsg)
 
             if Backend.isDbms(DBMS.MYSQL) and Backend.isFork(FORK.DRIZZLE):
@@ -138,7 +138,7 @@ class Users(object):
             if count == 0:
                 return kb.data.cachedUsers
             elif not isNumPosStrValue(count):
-                errMsg = "unable to retrieve the number of database users"
+                errMsg = "não foi possível retornar a quantidade de usuários do banco de dados"
                 raise SqlmapNoneDataException(errMsg)
 
             plusOne = Backend.getIdentifiedDbms() in PLUS_ONE_DBMSES
@@ -160,18 +160,18 @@ class Users(object):
                     kb.data.cachedUsers.append(user)
 
         if not kb.data.cachedUsers:
-            errMsg = "unable to retrieve the database users"
+            errMsg = "não foi possível retornar usuários ddo banco de dados"
             logger.error(errMsg)
 
         return kb.data.cachedUsers
 
     def getPasswordHashes(self):
-        infoMsg = "fetching database users password hashes"
+        infoMsg = "buscando hashes do usuários do banco de dados"
 
         rootQuery = queries[Backend.getIdentifiedDbms()].passwords
 
         if conf.user == CURRENT_USER:
-            infoMsg += " for current user"
+            infoMsg += " para usuário atual"
             conf.user = self.getCurrentUser()
 
         logger.info(infoMsg)
@@ -279,8 +279,8 @@ class Users(object):
                     if Backend.getIdentifiedDbms() in (DBMS.INFORMIX, DBMS.VIRTUOSO):
                         count = 1
                     else:
-                        infoMsg = "fetching number of password hashes "
-                        infoMsg += "for user '%s'" % user
+                        infoMsg = "buscando a quantidade de hashes de senhas "
+                        infoMsg += "para usuário '%s'" % user
                         logger.info(infoMsg)
 
                         if Backend.isDbms(DBMS.MSSQL) and Backend.isVersionWithin(("2005", "2008")):
@@ -550,7 +550,7 @@ class Users(object):
                         logger.warn(warnMsg)
                         continue
 
-                infoMsg = "fetching privileges for user '%s'" % outuser
+                infoMsg = "buscando usuários priviegiados do banco de dados '%s'" % outuser
                 logger.info(infoMsg)
 
                 privileges = set()

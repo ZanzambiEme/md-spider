@@ -94,17 +94,17 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
 
             if retVal and conf.hexConvert:
                 partialValue = retVal
-                infoMsg = "resuming partial value: %s" % safecharencode(partialValue)
+                infoMsg = "restaurando valores parciais: %s" % safecharencode(partialValue)
                 logger.info(infoMsg)
         elif PARTIAL_VALUE_MARKER in retVal:
             retVal = retVal.replace(PARTIAL_VALUE_MARKER, "")
 
             if retVal and not conf.hexConvert:
                 partialValue = retVal
-                infoMsg = "resuming partial value: %s" % safecharencode(partialValue)
+                infoMsg = "restaurando valores parciais: %s" % safecharencode(partialValue)
                 logger.info(infoMsg)
         else:
-            infoMsg = "resumed: %s" % safecharencode(retVal)
+            infoMsg = "restaurado: %s" % safecharencode(retVal)
             logger.info(infoMsg)
 
             return 0, retVal
@@ -201,10 +201,10 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
 
         if conf.verbose in (1, 2) and not any((showEta, conf.api, kb.bruteMode)):
             if isinstance(length, int) and numThreads > 1:
-                dataToStdout("[%s] [INFO] retrieved: %s" % (time.strftime("%X"), "_" * min(length, conf.progressWidth)))
-                dataToStdout("\r[%s] [INFO] retrieved: " % time.strftime("%X"))
+                dataToStdout("[%s] [INFO] retornado: %s" % (time.strftime("%X"), "_" * min(length, conf.progressWidth)))
+                dataToStdout("\r[%s] [INFO] retornado: " % time.strftime("%X"))
             else:
-                dataToStdout("\r[%s] [INFO] retrieved: " % time.strftime("%X"))
+                dataToStdout("\r[%s] [INFO] retornadod: " % time.strftime("%X"))
 
         def tryHint(idx):
             with kb.locks.hint:
@@ -574,10 +574,10 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
                 partialValue = "".join(value[:value.index(None)])
 
                 if partialValue:
-                    infoMsg = "\r[%s] [INFO] partially retrieved: %s" % (time.strftime("%X"), filterControlChars(partialValue))
+                    infoMsg = "\r[%s] [INFO] retorno parcial: %s" % (time.strftime("%X"), filterControlChars(partialValue))
             else:
                 finalValue = "".join(value)
-                infoMsg = "\r[%s] [INFO] retrieved: %s" % (time.strftime("%X"), filterControlChars(finalValue))
+                infoMsg = "\r[%s] [INFO] retornado: %s" % (time.strftime("%X"), filterControlChars(finalValue))
 
             if conf.verbose in (1, 2) and infoMsg and not any((showEta, conf.api, kb.bruteMode)):
                 dataToStdout(infoMsg)
@@ -694,7 +694,7 @@ def bisection(payload, expression, length=None, charsetType=None, firstChar=None
             hashDBWrite(expression, "%s%s" % (PARTIAL_VALUE_MARKER if not conf.hexConvert else PARTIAL_HEX_VALUE_MARKER, partialValue))
 
     if conf.hexConvert and not any((abortedFlag, conf.api, kb.bruteMode)):
-        infoMsg = "\r[%s] [INFO] retrieved: %s  %s\n" % (time.strftime("%X"), filterControlChars(finalValue), " " * retrievedLength)
+        infoMsg = "\r[%s] [INFO] retornado: %s  %s\n" % (time.strftime("%X"), filterControlChars(finalValue), " " * retrievedLength)
         dataToStdout(infoMsg)
     else:
         if conf.verbose in (1, 2) and not any((showEta, conf.api, kb.bruteMode)):

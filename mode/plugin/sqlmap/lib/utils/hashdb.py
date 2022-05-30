@@ -46,8 +46,8 @@ class HashDB(object):
                 threadData.hashDBCursor.execute("CREATE TABLE IF NOT EXISTS storage (id INTEGER PRIMARY KEY, value TEXT)")
                 connection.commit()
             except Exception as ex:
-                errMsg = "error occurred while opening a session "
-                errMsg += "file '%s' ('%s')" % (self.filepath, getSafeExString(ex))
+                errMsg = "erro ao abrir sessão "
+                errMsg += "do ficheiro '%s' ('%s')" % (self.filepath, getSafeExString(ex))
                 raise SqlmapConnectionException(errMsg)
 
         return threadData.hashDBCursor

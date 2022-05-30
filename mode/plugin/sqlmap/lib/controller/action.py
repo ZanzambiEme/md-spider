@@ -35,13 +35,11 @@ def action():
     if not Backend.getDbms() or not conf.dbmsHandler:
         htmlParsed = Format.getErrorParsedDBMSes()
 
-        errMsg = "sqlmap was not able to fingerprint the "
-        errMsg += "back-end database management system"
+        errMsg = "sqlmap não consegui enumerar o SGBD alvo"
 
         if htmlParsed:
-            errMsg += ", but from the HTML error page it was "
-            errMsg += "possible to determinate that the "
-            errMsg += "back-end DBMS is %s" % htmlParsed
+            errMsg += ", mas foi possível determinar com base no conteúdo html que "
+            errMsg += "o SGBD alvo é %s" % htmlParsed
 
         if htmlParsed and htmlParsed.lower() in SUPPORTED_DBMS:
             errMsg += ". Do not specify the back-end DBMS manually, "
@@ -80,7 +78,7 @@ def action():
 
     if conf.getPasswordHashes:
         try:
-            conf.dumper.userSettings("database management system users password hashes", conf.dbmsHandler.getPasswordHashes(), "password hash", CONTENT_TYPE.PASSWORDS)
+            conf.dumper.userSettings("hashes do usuário do banco de dados", conf.dbmsHandler.getPasswordHashes(), "hashes da senha", CONTENT_TYPE.PASSWORDS)
         except SqlmapNoneDataException as ex:
             logger.critical(ex)
         except:
@@ -88,7 +86,7 @@ def action():
 
     if conf.getPrivileges:
         try:
-            conf.dumper.userSettings("database management system users privileges", conf.dbmsHandler.getPrivileges(), "privilege", CONTENT_TYPE.PRIVILEGES)
+            conf.dumper.userSettings("privilégio do usuários do banco de dados", conf.dbmsHandler.getPrivileges(), "privilégios", CONTENT_TYPE.PRIVILEGES)
         except SqlmapNoneDataException as ex:
             logger.critical(ex)
         except:
@@ -96,7 +94,7 @@ def action():
 
     if conf.getRoles:
         try:
-            conf.dumper.userSettings("database management system users roles", conf.dbmsHandler.getRoles(), "role", CONTENT_TYPE.ROLES)
+            conf.dumper.userSettings("tarefas de usuário de banco de dados", conf.dbmsHandler.getRoles(), "tarefas", CONTENT_TYPE.ROLES)
         except SqlmapNoneDataException as ex:
             logger.critical(ex)
         except:

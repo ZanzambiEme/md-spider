@@ -110,8 +110,8 @@ def checkEnvironment():
     try:
         os.path.isdir(modulePath())
     except UnicodeEncodeError:
-        errMsg = "your system does not properly handle non-ASCII paths. "
-        errMsg += "Please move the sqlmap's directory to the other location"
+        errMsg = "o seu sistema não suporta propriamente caminhos non-ASCII. "
+        errMsg += "por favor mova o sqlmap pra outroo directório"
         logger.critical(errMsg)
         raise SystemExit
 
@@ -196,13 +196,13 @@ def main():
                                     if not re.search(r"(?i)\Ahttp[s]*://", target):
                                         target = "http://%s" % target
 
-                                    infoMsg = "starting crawler for target URL '%s' (%d/%d)" % (target, i + 1, len(targets))
+                                    infoMsg = "Filtrando URL '%s' (%d/%d)" % (target, i + 1, len(targets))
                                     logger.info(infoMsg)
 
                                     crawl(target)
                                 except Exception as ex:
                                     if target and not isinstance(ex, SqlmapUserQuitException):
-                                        errMsg = "problem occurred while crawling '%s' ('%s')" % (target, getSafeExString(ex))
+                                        errMsg = "problemas encontrado enquanto filtrava '%s' ('%s')" % (target, getSafeExString(ex))
                                         logger.error(errMsg)
                                     else:
                                         raise
@@ -504,7 +504,7 @@ def main():
         kb.threadContinue = False
 
         if getDaysFromLastUpdate() > LAST_UPDATE_NAGGING_DAYS:
-            warnMsg = "your sqlmap version is outdated"
+            warnMsg = "a sua versão de sqlmap está desatualizada"
             logger.warn(warnMsg)
 
         #if conf.get("showTime"):

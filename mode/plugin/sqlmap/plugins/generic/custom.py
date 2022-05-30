@@ -85,8 +85,8 @@ class Custom(object):
         return output
 
     def sqlShell(self):
-        infoMsg = "calling %s shell. To quit type " % Backend.getIdentifiedDbms()
-        infoMsg += "'x' or 'q' and press ENTER"
+        infoMsg = "chamando %s shell. Para sair digite " % Backend.getIdentifiedDbms()
+        infoMsg += "'x' ou 'q' e pressione ENTER"
         logger.info(infoMsg)
 
         autoCompletion(AUTOCOMPLETE_TYPE.SQL)
@@ -100,7 +100,7 @@ class Custom(object):
                 query = query.strip("; ")
             except KeyboardInterrupt:
                 print()
-                errMsg = "user aborted"
+                errMsg = "abortagem na parte do usuário"
                 logger.error(errMsg)
             except EOFError:
                 print()
@@ -126,7 +126,7 @@ class Custom(object):
                 dataToStdout("No output\n")
 
     def sqlFile(self):
-        infoMsg = "executing SQL statements from given file(s)"
+        infoMsg = "executando isntruções sql de ficheiros dado"
         logger.info(infoMsg)
 
         for filename in re.split(PARAMETER_SPLITTING_REGEX, conf.sqlFile):

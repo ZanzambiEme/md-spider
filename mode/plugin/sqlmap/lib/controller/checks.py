@@ -159,8 +159,8 @@ def checkSqlInjection(place, parameter, value):
                 # DBMS
 
                 if kb.reduceTests is None and not conf.testFilter and (intersect(Backend.getErrorParsedDBMSes(), SUPPORTED_DBMS, True) or kb.heuristicDbms or injection.dbms):
-                    msg = "it looks like the back-end DBMS is '%s'. " % (Format.getErrorParsedDBMSes() or kb.heuristicDbms or joinValue(injection.dbms, '/'))
-                    msg += "Do you want to skip test payloads specific for other DBMSes? [Y/n]"
+                    msg = "parece que o SGBD alvo é '%s'. " % (Format.getErrorParsedDBMSes() or kb.heuristicDbms or joinValue(injection.dbms, '/'))
+                    msg += "Deseja pular testes de outros SGBDs? [Y/n]"
                     kb.reduceTests = (Backend.getErrorParsedDBMSes() or [kb.heuristicDbms]) if readInput(msg, default='Y', boolean=True) else []
 
             # If the DBMS has been fingerprinted (via DBMS-specific error
@@ -168,12 +168,12 @@ def checkSqlInjection(place, parameter, value):
             # payload), ask the user to extend the tests to all DBMS-specific,
             # regardless of --level and --risk values provided
             if kb.extendTests is None and not conf.testFilter and (conf.level < 5 or conf.risk < 3) and (intersect(Backend.getErrorParsedDBMSes(), SUPPORTED_DBMS, True) or kb.heuristicDbms or injection.dbms):
-                msg = "for the remaining tests, do you want to include all tests "
-                msg += "for '%s' extending provided " % (Format.getErrorParsedDBMSes() or kb.heuristicDbms or joinValue(injection.dbms, '/'))
+                msg = "desejas continuar teste"
+                msg += " '%s' com valores pré estabelecidos para flags " % (Format.getErrorParsedDBMSes() or kb.heuristicDbms or joinValue(injection.dbms, '/'))
                 msg += "level (%d)" % conf.level if conf.level < 5 else ""
                 msg += " and " if conf.level < 5 and conf.risk < 3 else ""
                 msg += "risk (%d)" % conf.risk if conf.risk < 3 else ""
-                msg += " values? [Y/n]" if conf.level < 5 and conf.risk < 3 else " value? [Y/n]"
+                msg += " pro restante de teste? [Y/n]" if conf.level < 5 and conf.risk < 3 else " restante? [Y/n]"
                 kb.extendTests = (Backend.getErrorParsedDBMSes() or [kb.heuristicDbms]) if readInput(msg, default='Y', boolean=True) else []
 
             title = test.title
@@ -347,19 +347,19 @@ def checkSqlInjection(place, parameter, value):
                     _ = test.request.columns.split('-')[-1]
                     if conf.uCols is None and _.isdigit():
                         if kb.futileUnion is None:
-                            msg = "it is recommended to perform "
-                            msg += "only basic UNION tests if there is not "
-                            msg += "at least one other (potential) "
-                            msg += "technique found. Do you want to reduce "
-                            msg += "the number of requests? [Y/n] "
+                            msg = "É recomendado que se faça "
+                            msg += "apenas testes básicos UNION se não tiver "
+                            msg += "no mínomo uma outra "
+                            msg += "tecnica encontrado. Desejas reduzir? "
+                            msg += "o número de requesições? [Y/n] "
                             kb.futileUnion = readInput(msg, default='Y', boolean=True)
 
                         if kb.futileUnion and int(_) > 10:
-                            debugMsg = "skipping test '%s'" % title
+                            debugMsg = "pulanod testes'%s'" % title
                             logger.debug(debugMsg)
                             continue
 
-            infoMsg = "testing '%s'" % title
+            infoMsg = "testando '%s'" % title
             logger.info(infoMsg)
 
             # Force back-end DBMS according to the current test DBMS value
@@ -574,7 +574,7 @@ def checkSqlInjection(place, parameter, value):
                                                     suggestion = conf.string = candidate
                                                     injectable = True
 
-                                                    infoMsg = "%sparameter '%s' appears to be '%s' injectable (with --string=\"%s\")" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.string).lstrip('u').strip("'"))
+                                                    infoMsg = "parâmetro %s '%s' parece ser injetável'%s' com  --string=\"%s\"" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.string).lstrip('u').strip("'"))
                                                     logger.info(infoMsg)
 
                                                     break
@@ -584,7 +584,7 @@ def checkSqlInjection(place, parameter, value):
                                     if all((falseCode, trueCode)) and falseCode != trueCode:
                                         suggestion = conf.code = trueCode
 
-                                        infoMsg = "%sparameter '%s' appears to be '%s' injectable (with --code=%d)" % ("%s " % paramType if paramType != parameter else "", parameter, title, conf.code)
+                                        infoMsg = "parâmetro %s '%s' parece ser injetável'%s' com --code=%d" % ("%s " % paramType if paramType != parameter else "", parameter, title, conf.code)
                                         logger.info(infoMsg)
                                     else:
                                         trueSet = set(extractTextTagContent(trueRawResponse))
@@ -609,7 +609,7 @@ def checkSqlInjection(place, parameter, value):
 
                                             suggestion = conf.string = candidate
 
-                                            infoMsg = "%sparameter '%s' appears to be '%s' injectable (with --string=\"%s\")" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.string).lstrip('u').strip("'"))
+                                            infoMsg = "parâmetro %s '%s' parece ser injetável'%s' com --string=\"%s\")" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.string).lstrip('u').strip("'"))
                                             logger.info(infoMsg)
 
                                         if not any((conf.string, conf.notString)):
@@ -623,11 +623,11 @@ def checkSqlInjection(place, parameter, value):
 
                                                 suggestion = conf.notString = candidate
 
-                                                infoMsg = "%sparameter '%s' appears to be '%s' injectable (with --not-string=\"%s\")" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.notString).lstrip('u').strip("'"))
+                                                infoMsg = "parâmetro %s '%s' parece ser injetável'%s' com --not-string=\"%s\")" % ("%s " % paramType if paramType != parameter else "", parameter, title, repr(conf.notString).lstrip('u').strip("'"))
                                                 logger.info(infoMsg)
 
                                 if not suggestion:
-                                    infoMsg = "%sparameter '%s' appears to be '%s' injectable " % ("%s " % paramType if paramType != parameter else "", parameter, title)
+                                    infoMsg = "parâmetro %s '%s' parece ser injetável'%s' " % ("%s " % paramType if paramType != parameter else "", parameter, title)
                                     singleTimeLogMessage(infoMsg)
 
                         # In case of error-based SQL injection
@@ -1071,7 +1071,7 @@ def heuristicCheckSqlInjection(place, parameter):
     parseFilePaths(page)
     result = wasLastResponseDBMSError()
 
-    infoMsg = "heuristic (basic) test shows that %sparameter '%s' might " % ("%s " % paramType if paramType != parameter else "", parameter)
+    infoMsg = "Testes heuristic (basico) mostraram que o parâmetro %s '%s' seja " % ("%s " % paramType if paramType != parameter else "", parameter)
 
     def _(page):
         return any(_ in (page or "") for _ in FORMAT_EXCEPTION_STRINGS)
@@ -1118,13 +1118,13 @@ def heuristicCheckSqlInjection(place, parameter):
             kb.ignoreCasted = readInput(message, default='Y' if conf.multipleTargets else 'N', boolean=True)
 
     elif result:
-        infoMsg += "be injectable"
+        infoMsg += " injetável"
         if Backend.getErrorParsedDBMSes():
             infoMsg += " (possible DBMS: '%s')" % Format.getErrorParsedDBMSes()
         logger.info(infoMsg)
 
     else:
-        infoMsg += "not be injectable"
+        infoMsg += "não injetável"
         logger.warn(infoMsg)
 
     kb.heuristicMode = True
@@ -1140,7 +1140,7 @@ def heuristicCheckSqlInjection(place, parameter):
 
     # Reference: https://bugs.python.org/issue18183
     if value.upper() in (page or "").upper():
-        infoMsg = "heuristic (XSS) test shows that %sparameter '%s' might be vulnerable to cross-site scripting (XSS) attacks" % ("%s " % paramType if paramType != parameter else "", parameter)
+        infoMsg = "testes heuristic (XSS) mostrou que o parâmetro  %s '%s' possa ser vulnerável a ataques cross-site scripting (XSS) " % ("%s " % paramType if paramType != parameter else "", parameter)
         logger.info(infoMsg)
 
         if conf.beep:
@@ -1148,7 +1148,7 @@ def heuristicCheckSqlInjection(place, parameter):
 
     for match in re.finditer(FI_ERROR_REGEX, page or ""):
         if randStr1.lower() in match.group(0).lower():
-            infoMsg = "heuristic (FI) test shows that %sparameter '%s' might be vulnerable to file inclusion (FI) attacks" % ("%s " % paramType if paramType != parameter else "", parameter)
+            infoMsg = "heuristic (FI) mostrou que o parâmetro %s '%s'  possa ser vulnerável a ataques de inclusão de ficheiro (FI) " % ("%s " % paramType if paramType != parameter else "", parameter)
             logger.info(infoMsg)
 
             if conf.beep:
@@ -1177,7 +1177,7 @@ def checkDynParam(place, parameter, value):
 
     paramType = conf.method if conf.method not in (None, HTTPMETHOD.GET, HTTPMETHOD.POST) else place
 
-    infoMsg = "testing if %sparameter '%s' is dynamic" % ("%s " % paramType if paramType != parameter else "", parameter)
+    infoMsg = "testando se parâmetro %s  '%s' é dinámico" % ("%s " % paramType if paramType != parameter else "", parameter)
     logger.info(infoMsg)
 
     try:
@@ -1258,7 +1258,7 @@ def checkStability():
     like for instance string matching (--string).
     """
 
-    infoMsg = "testing if the target URL content is stable"
+    infoMsg = "testando a estabilidade do conteúdo do alvo dada pela URL"
     logger.info(infoMsg)
 
     firstPage = kb.originalPage  # set inside checkConnection()
@@ -1276,7 +1276,7 @@ def checkStability():
 
     if kb.pageStable:
         if firstPage:
-            infoMsg = "target URL content is stable"
+            infoMsg = "Conteúdo Estável"
             logger.info(infoMsg)
         else:
             errMsg = "there was an error checking the stability of page "
@@ -1293,7 +1293,7 @@ def checkStability():
         warnMsg += "'Page comparison'"
         logger.warn(warnMsg)
 
-        message = "how do you want to proceed? [(C)ontinue/(s)tring/(r)egex/(q)uit] "
+        message = "Como deseja continuar? [(C)ontinuar/(s)tring/(r)egex/(q)sair] "
         choice = readInput(message, default='C').upper()
 
         if choice == 'Q':
@@ -1332,7 +1332,7 @@ def checkStability():
 
                     kb.nullConnection = None
             else:
-                errMsg = "Empty value supplied"
+                errMsg = "Valor vazio"
                 raise SqlmapNoneDataException(errMsg)
 
         else:
@@ -1355,16 +1355,16 @@ def checkWaf():
     _ = hashDBRetrieve(HASHDB_KEYS.CHECK_WAF_RESULT, True)
     if _ is not None:
         if _:
-            warnMsg = "previous heuristics detected that the target "
-            warnMsg += "is protected by some kind of WAF/IPS"
+            warnMsg = "O sqlmap detectou que o alvo"
+            warnMsg += "está sendo protegido por um tipo de WAF/IPS"
             logger.critical(warnMsg)
         return _
 
     if not kb.originalPage:
         return None
 
-    infoMsg = "checking if the target is protected by "
-    infoMsg += "some kind of WAF/IPS"
+    infoMsg = "testando se o alvo está sendo protegido "
+    infoMsg += "por um tipo de WAF/IPS"
     logger.info(infoMsg)
 
     retVal = False
@@ -1401,12 +1401,12 @@ def checkWaf():
 
     if retVal:
         if not kb.identifiedWafs:
-            warnMsg = "heuristics detected that the target "
-            warnMsg += "is protected by some kind of WAF/IPS"
+            warnMsg = "O sqlmap detectou que o alvo"
+            warnMsg += "está sendo protegido por um tipo de WAF/IPS"
             logger.critical(warnMsg)
 
-        message = "are you sure that you want to "
-        message += "continue with further target testing? [Y/n] "
+        message = "tem certeza que desejas"
+        message += "continuar com testes? [Y/n] "
         choice = readInput(message, default='Y', boolean=True)
 
         if not choice:
@@ -1591,9 +1591,9 @@ def checkConnection(suppressOutput=False):
 
     if conf.cj and not conf.cookie and not any(_[0] == HTTP_HEADER.COOKIE for _ in conf.httpHeaders) and not conf.dropSetCookie:
         candidate = DEFAULT_COOKIE_DELIMITER.join("%s=%s" % (_.name, _.value) for _ in conf.cj)
-        message = "you have not declared cookie(s), while "
-        message += "server wants to set its own ('%s'). " % re.sub(r"(=[^=;]{10}[^=;])[^=;]+([^=;]{10})", r"\g<1>...\g<2>", candidate)
-        message += "Do you want to use those [Y/n] "
+        message = "Não foi providenciado nenhum cookie, portanto "
+        message += "o servidor setará o seu ('%s'). " % re.sub(r"(=[^=;]{10}[^=;])[^=;]+([^=;]{10})", r"\g<1>...\g<2>", candidate)
+        message += "Desejas usar eles? [Y/n] "
         if readInput(message, default='Y', boolean=True):
             kb.mergeCookies = True
             conf.httpHeaders.append((HTTP_HEADER.COOKIE, candidate))

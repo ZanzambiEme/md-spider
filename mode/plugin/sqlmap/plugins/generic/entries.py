@@ -65,9 +65,9 @@ class Entries(object):
 
         if conf.db is None or conf.db == CURRENT_DB:
             if conf.db is None:
-                warnMsg = "missing database parameter. sqlmap is going "
-                warnMsg += "to use the current database to enumerate "
-                warnMsg += "table(s) entries"
+                warnMsg = "faltando parâmetros. Será usada"
+                warnMsg += "o banco de dados atual pra enumerar "
+                warnMsg += "entradas de tabelas"
                 logger.warn(warnMsg)
 
             conf.db = self.getCurrentDb()
@@ -102,8 +102,8 @@ class Entries(object):
                 if tblList and isListLike(tblList[0]):
                     tblList = tblList[0]
             elif conf.db and not conf.search:
-                errMsg = "unable to retrieve the tables "
-                errMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
+                errMsg = "não foi possíve retornar tabelas "
+                errMsg += "no banco de dados  '%s'" % unsafeSQLIdentificatorNaming(conf.db)
                 raise SqlmapNoneDataException(errMsg)
             else:
                 return
@@ -116,7 +116,7 @@ class Entries(object):
                 break
 
             if conf.exclude and re.search(conf.exclude, tbl, re.I) is not None:
-                infoMsg = "skipping table '%s'" % unsafeSQLIdentificatorNaming(tbl)
+                infoMsg = "pulando tabela '%s'" % unsafeSQLIdentificatorNaming(tbl)
                 singleTimeLogMessage(infoMsg)
                 continue
 
@@ -138,10 +138,10 @@ class Entries(object):
                     kb.dumpTable = "%s.%s" % (conf.db, tbl)
 
                 if safeSQLIdentificatorNaming(conf.db) not in kb.data.cachedColumns or safeSQLIdentificatorNaming(tbl, True) not in kb.data.cachedColumns[safeSQLIdentificatorNaming(conf.db)] or not kb.data.cachedColumns[safeSQLIdentificatorNaming(conf.db)][safeSQLIdentificatorNaming(tbl, True)]:
-                    warnMsg = "unable to enumerate the columns for table '%s'" % unsafeSQLIdentificatorNaming(tbl)
+                    warnMsg = "não foi possível enumerar coluna da tabela '%s'" % unsafeSQLIdentificatorNaming(tbl)
                     if METADB_SUFFIX not in conf.db:
-                        warnMsg += " in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                    warnMsg += ", skipping" if len(tblList) > 1 else ""
+                        warnMsg += " no banco de dados '%s'" % unsafeSQLIdentificatorNaming(conf.db)
+                    warnMsg += ", pulando" if len(tblList) > 1 else ""
                     logger.warn(warnMsg)
 
                     continue
@@ -153,10 +153,10 @@ class Entries(object):
                     colList = [_ for _ in colList if re.search(conf.exclude, _, re.I) is None]
 
                 if not colList:
-                    warnMsg = "skipping table '%s'" % unsafeSQLIdentificatorNaming(tbl)
+                    warnMsg = "pulando tabela '%s'" % unsafeSQLIdentificatorNaming(tbl)
                     if METADB_SUFFIX not in conf.db:
-                        warnMsg += " in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
-                    warnMsg += " (no usable column names)"
+                        warnMsg += " no banco de dados '%s'" % unsafeSQLIdentificatorNaming(conf.db)
+                    warnMsg += " (sem colunas usuais)"
                     logger.warn(warnMsg)
                     continue
 
@@ -164,12 +164,12 @@ class Entries(object):
                 colNames = colString = ','.join(column for column in colList)
                 rootQuery = queries[Backend.getIdentifiedDbms()].dump_table
 
-                infoMsg = "fetching entries"
+                infoMsg = "buscando entradas"
                 if conf.col:
-                    infoMsg += " of column(s) '%s'" % colNames
-                infoMsg += " for table '%s'" % unsafeSQLIdentificatorNaming(tbl)
+                    infoMsg += " da coluna(s) '%s'" % colNames
+                infoMsg += " para a tabela '%s'" % unsafeSQLIdentificatorNaming(tbl)
                 if METADB_SUFFIX not in conf.db:
-                    infoMsg += " in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
+                    infoMsg += " no banco de dados '%s'" % unsafeSQLIdentificatorNaming(conf.db)
                 logger.info(infoMsg)
 
                 for column in colList:
@@ -285,11 +285,11 @@ class Entries(object):
                                 kb.data.dumpedTable[column]["values"].append(colEntry)
 
                 if not kb.data.dumpedTable and isInferenceAvailable() and not conf.direct:
-                    infoMsg = "fetching number of "
+                    infoMsg = "buscando a quantidade de entradas na  "
                     if conf.col:
-                        infoMsg += "column(s) '%s' " % colNames
-                    infoMsg += "entries for table '%s' " % unsafeSQLIdentificatorNaming(tbl)
-                    infoMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
+                        infoMsg += "coluna(s) '%s' " % colNames
+                    infoMsg += "para tabela '%s' " % unsafeSQLIdentificatorNaming(tbl)
+                    infoMsg += "no banco de dados '%s'" % unsafeSQLIdentificatorNaming(conf.db)
                     logger.info(infoMsg)
 
                     if Backend.getIdentifiedDbms() in (DBMS.ORACLE, DBMS.DB2, DBMS.DERBY, DBMS.ALTIBASE, DBMS.MIMERSQL):
@@ -311,9 +311,9 @@ class Entries(object):
                     entries = {}
 
                     if count == 0:
-                        warnMsg = "table '%s' " % unsafeSQLIdentificatorNaming(tbl)
-                        warnMsg += "in database '%s' " % unsafeSQLIdentificatorNaming(conf.db)
-                        warnMsg += "appears to be empty"
+                        warnMsg = "tabela'%s' " % unsafeSQLIdentificatorNaming(tbl)
+                        warnMsg += "no banco de dados '%s' " % unsafeSQLIdentificatorNaming(conf.db)
+                        warnMsg += "parece estar vazia"
                         logger.warn(warnMsg)
 
                         for column in colList:
@@ -321,11 +321,11 @@ class Entries(object):
                             entries[column] = []
 
                     elif not isNumPosStrValue(count):
-                        warnMsg = "unable to retrieve the number of "
+                        warnMsg = "não foi possível retornar a quantidade entradas de "
                         if conf.col:
-                            warnMsg += "column(s) '%s' " % colNames
-                        warnMsg += "entries for table '%s' " % unsafeSQLIdentificatorNaming(tbl)
-                        warnMsg += "in database '%s'" % unsafeSQLIdentificatorNaming(conf.db)
+                            warnMsg += "coluna(s) '%s' " % colNames
+                        warnMsg += "para a tabela'%s' " % unsafeSQLIdentificatorNaming(tbl)
+                        warnMsg += "no banco de dados '%s'" % unsafeSQLIdentificatorNaming(conf.db)
                         logger.warn(warnMsg)
 
                         continue
@@ -387,7 +387,7 @@ class Entries(object):
                         indexRange = getLimitRange(count, plusOne=plusOne)
 
                         if len(colList) < len(indexRange) > CHECK_ZERO_COLUMNS_THRESHOLD:
-                            debugMsg = "checking for empty columns"
+                            debugMsg = "checando pelas colunas vazias"
                             logger.debug(infoMsg)
 
                             for column in colList:

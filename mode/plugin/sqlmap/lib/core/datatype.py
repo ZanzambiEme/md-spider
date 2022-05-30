@@ -45,7 +45,7 @@ class AttribDict(dict):
             return self.__getitem__(item)
         except KeyError:
             if self.keycheck:
-                raise AttributeError("unable to access item '%s'" % item)
+                raise AttributeError("Não foi possível acessar o item'%s'" % item)
             else:
                 return None
 

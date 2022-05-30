@@ -71,7 +71,7 @@ def _oneShotErrorUse(expression, field=None, chunkTest=False):
 
     if retVal and PARTIAL_VALUE_MARKER in retVal:
         partialValue = retVal = retVal.replace(PARTIAL_VALUE_MARKER, "")
-        logger.info("resuming partial value: '%s'" % _formatPartialContent(partialValue))
+        logger.info("restaurando valores parciais: '%s'" % _formatPartialContent(partialValue))
         offset += len(partialValue)
 
     threadData.resumed = retVal is not None and not partialValue
@@ -396,8 +396,8 @@ def errorUse(expression, dump=False):
                     for field in expressionFieldsList:
                         if _oneShotErrorUse("SELECT COUNT(%s) FROM %s" % (field, kb.dumpTable)) == '0':
                             emptyFields.append(field)
-                            debugMsg = "column '%s' of table '%s' will not be " % (field, kb.dumpTable)
-                            debugMsg += "dumped as it appears to be empty"
+                            debugMsg = "coluna '%s' da tabela '%s' não será " % (field, kb.dumpTable)
+                            debugMsg += "retornado, porque parece estar vazio"
                             logger.debug(debugMsg)
 
                 if stopLimit > TURN_OFF_RESUME_INFO_LIMIT:
@@ -443,8 +443,8 @@ def errorUse(expression, dump=False):
 
                 except KeyboardInterrupt:
                     abortedFlag = True
-                    warnMsg = "user aborted during enumeration. sqlmap "
-                    warnMsg += "will display partial output"
+                    warnMsg = "usuário abortou durante o processo de enumeração. "
+                    warnMsg += "Será mostrado valores parciais"
                     logger.warn(warnMsg)
 
                 finally:
@@ -464,7 +464,7 @@ def errorUse(expression, dump=False):
     duration = calculateDeltaSeconds(start)
 
     if not kb.bruteMode:
-        debugMsg = "performed %d quer%s in %.2f seconds" % (kb.counters[getTechnique()], 'y' if kb.counters[getTechnique()] == 1 else "ies", duration)
+        debugMsg = "executado %d quer%s em %.2f segundos" % (kb.counters[getTechnique()], 'y' if kb.counters[getTechnique()] == 1 else "ies", duration)
         logger.debug(debugMsg)
 
     return value

@@ -86,7 +86,7 @@ class Dump(object):
         try:
             self._outputFP.write(text)
         except IOError as ex:
-            errMsg = "error occurred while writing to log file ('%s')" % getSafeExString(ex)
+            errMsg = "Erro ao escrever no arquivo de logging ('%s')" % getSafeExString(ex)
             raise SqlmapGenericException(errMsg)
 
         if multiThreadMode:
@@ -106,7 +106,7 @@ class Dump(object):
         try:
             self._outputFP = openFile(self._outputFile, "ab" if not conf.flushSession else "wb")
         except IOError as ex:
-            errMsg = "error occurred while opening log file ('%s')" % getSafeExString(ex)
+            errMsg = "erro ao carregar arquivo de logging ('%s')" % getSafeExString(ex)
             raise SqlmapGenericException(errMsg)
 
     def singleString(self, data, content_type=None):
@@ -227,7 +227,7 @@ class Dump(object):
             self.singleString("")
 
     def dbs(self, dbs):
-        self.lister("Banco de dados disponíveis", dbs, content_type=CONTENT_TYPE.DBS)
+        self.lister("Bancos de dados disponíveis", dbs, content_type=CONTENT_TYPE.DBS)
 
     def dbTables(self, dbTables):
         if isinstance(dbTables, dict) and len(dbTables) > 0:
@@ -349,8 +349,8 @@ class Dump(object):
             if conf.api:
                 self._write(dbTables, content_type=CONTENT_TYPE.COUNT)
 
-            maxlength1 = len("Table")
-            maxlength2 = len("Entries")
+            maxlength1 = len("Tabelas")
+            maxlength2 = len("Entradas")
 
             for ctables in dbTables.values():
                 for tables in ctables.values():

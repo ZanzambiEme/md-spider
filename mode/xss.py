@@ -87,7 +87,7 @@ try:
                                     ######################################
                                     array_form_return = arrayForm(form_tag)
                                     input_tag = array_form_return[user_option].find_all({'input'})
-                                    print("["+color.green+"+"+color.end+"]"+color.green+color.end+"["+color.admin_side, datetime.now(), color.end+"]  Injetando Payloads...")
+                                    print("["+color.green+"+"+color.end+"]"+color.green+color.end+"["+color.admin_side, datetime.now(), color.end+"]  Testando...")
                                     try:
                                             with open('./mode/payload/xss-payload', 'r') as payload:
                                                 if verbose:
@@ -119,6 +119,9 @@ try:
                                                             ##################################################################################################
                                                             break;
                                                         else:
+                                                            ############################
+                                                            import random              #
+                                                            ############################
                                                             unblocked_payloads[random] = lines
                                                             config.TARGET_VULNERABLE = True
                                                             pass

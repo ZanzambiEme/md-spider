@@ -622,8 +622,8 @@ def storeHashesToFile(attack_dict):
                     items.add(item)
 
     if kb.choices.storeHashes is None:
-        message = "do you want to store hashes to a temporary file "
-        message += "for eventual further processing with other tools [y/N] "
+        message = "desejas armazenar os hashes em arquivo temporário "
+        message += "para eventual processamento com outras ferramentas? [y/N] "
 
         kb.choices.storeHashes = readInput(message, default='N', boolean=True)
 
@@ -631,7 +631,7 @@ def storeHashesToFile(attack_dict):
         handle, filename = tempfile.mkstemp(prefix=MKSTEMP_PREFIX.HASHES, suffix=".txt")
         os.close(handle)
 
-        infoMsg = "writing hashes to a temporary file '%s' " % filename
+        infoMsg = "escrevendo hashes no arquivo temporário  '%s' " % filename
         logger.info(infoMsg)
 
         with openFile(filename, "w+") as f:
@@ -665,7 +665,7 @@ def attackDumpedTable():
         if not count:
             return
 
-        debugMsg = "analyzing table dump for possible password hashes"
+        debugMsg = "analizando a tabela procurando possíveis hashes"
         logger.debug(debugMsg)
 
         found = False
@@ -687,8 +687,8 @@ def attackDumpedTable():
 
         if binary_fields:
             _ = ','.join(binary_fields)
-            warnMsg = "potential binary fields detected ('%s'). In case of any problems you are " % _
-            warnMsg += "advised to rerun table dump with '--fresh-queries --binary-fields=\"%s\"'" % _
+            warnMsg = "potenciais campos binários econtrado ('%s'). Em caso de um possível erro, recomenda-se " % _
+            warnMsg += "que se reexecute table dump com parâmetro '--fresh-queries --binary-fields=\"%s\"'" % _
             logger.warn(warnMsg)
 
         for i in xrange(count):
@@ -726,13 +726,13 @@ def attackDumpedTable():
                     col_passwords.add(column)
 
         if attack_dict:
-            infoMsg = "recognized possible password hashes in column%s " % ("s" if len(col_passwords) > 1 else "")
+            infoMsg = "reconheccido um possível hash na coluna%s " % ("s" if len(col_passwords) > 1 else "")
             infoMsg += "'%s'" % ", ".join(col for col in col_passwords)
             logger.info(infoMsg)
 
             storeHashesToFile(attack_dict)
 
-            message = "do you want to crack them via a dictionary-based attack? %s" % ("[y/N/q]" if conf.multipleTargets else "[Y/n/q]")
+            message = "desejas crackear elas com ataque de dicionário? %s" % ("[y/N/q]" if conf.multipleTargets else "[Y/n/q]")
             choice = readInput(message, default='N' if conf.multipleTargets else 'Y').upper()
 
             if choice == 'N':
@@ -999,7 +999,7 @@ def dictionaryAttack(attack_dict):
 
             if regex and regex not in hash_regexes:
                 hash_regexes.append(regex)
-                infoMsg = "using hash method '%s'" % __functions__[regex].__name__
+                infoMsg = "usango o método hash '%s'" % __functions__[regex].__name__
                 logger.info(infoMsg)
 
     for hash_regex in hash_regexes:
@@ -1051,7 +1051,7 @@ def dictionaryAttack(attack_dict):
                             if ITOA64.index(hash_[3]) < 32:
                                 item = [(user, hash_), {"salt": hash_[4:12], "count": 1 << ITOA64.index(hash_[3]), "prefix": hash_[:3]}]
                             else:
-                                warnMsg = "invalid hash '%s'" % hash_
+                                warnMsg = "hash inválido '%s'" % hash_
                                 logger.warn(warnMsg)
 
                         if item and hash_ not in keys:
@@ -1060,9 +1060,9 @@ def dictionaryAttack(attack_dict):
                                 attack_info.append(item)
                                 user_hash.append(item[0])
                             else:
-                                infoMsg = "resuming password '%s' for hash '%s'" % (resumed, hash_)
+                                infoMsg = "resumindo a senha '%s' para hash '%s'" % (resumed, hash_)
                                 if user and not user.startswith(DUMMY_USER_PREFIX):
-                                    infoMsg += " for user '%s'" % user
+                                    infoMsg += " para usuário '%s'" % user
                                 logger.info(infoMsg)
                                 resumes.append((user, hash_, resumed))
                             keys.add(hash_)
@@ -1082,27 +1082,27 @@ def dictionaryAttack(attack_dict):
                 else:
                     dictPaths = [paths.WORDLIST]
 
-                message = "what dictionary do you want to use?\n"
-                message += "[1] default dictionary file '%s' (press Enter)\n" % dictPaths[0]
-                message += "[2] custom dictionary file\n"
-                message += "[3] file with list of dictionary files"
+                message = "qual dos dicionários desejas usar?\n"
+                message += "[1] dicionário padrão '%s' (pressione Enter)\n" % dictPaths[0]
+                message += "[2] arquivo de dicionário customizado\n"
+                message += "[3] ficheiro com lista de dicionários"
                 choice = readInput(message, default='1')
 
                 try:
                     if choice == '2':
-                        message = "what's the custom dictionary's location?\n"
+                        message = "qual a localização do dicionário customizado?\n"
                         dictPath = readInput(message)
                         if dictPath:
                             dictPaths = [dictPath]
-                            logger.info("using custom dictionary")
+                            logger.info("usando o dicionário customizado")
                     elif choice == '3':
-                        message = "what's the list file location?\n"
+                        message = "qual a localização da lista de ficheiro?\n"
                         listPath = readInput(message)
                         checkFile(listPath)
                         dictPaths = getFileItems(listPath)
-                        logger.info("using custom list of dictionaries")
+                        logger.info("usando a lista de dicionário customizado")
                     else:
-                        logger.info("using default dictionary")
+                        logger.info("usando o dicionário padrão")
 
                     dictPaths = [_ for _ in dictPaths if _]
 
@@ -1124,12 +1124,12 @@ def dictionaryAttack(attack_dict):
                     warnMsg += " ('%s')" % getSafeExString(ex)
                     logger.critical(warnMsg)
 
-            message = "do you want to use common password suffixes? (slow!) [y/N] "
+            message = "desejas usar os sufixo padrão de senhas? (lenta!) [y/N] "
 
             if readInput(message, default='N', boolean=True):
                 suffix_list += COMMON_PASSWORD_SUFFIXES
 
-        infoMsg = "starting dictionary-based cracking (%s)" % __functions__[hash_regex].__name__
+        infoMsg = "iniciando ataque de dicionaário (%s)" % __functions__[hash_regex].__name__
         logger.info(infoMsg)
 
         for item in attack_info:
@@ -1145,7 +1145,7 @@ def dictionaryAttack(attack_dict):
 
                 if suffix:
                     clearConsoleLine()
-                    infoMsg = "using suffix '%s'" % suffix
+                    infoMsg = "usando sufixo '%s'" % suffix
                     logger.info(infoMsg)
 
                 retVal = None
@@ -1154,7 +1154,7 @@ def dictionaryAttack(attack_dict):
                 try:
                     if _multiprocessing:
                         if _multiprocessing.cpu_count() > 1:
-                            infoMsg = "starting %d processes " % _multiprocessing.cpu_count()
+                            infoMsg = "iniciando processos %d " % _multiprocessing.cpu_count()
                             singleTimeLogMessage(infoMsg)
 
                         gc.disable()
@@ -1184,7 +1184,7 @@ def dictionaryAttack(attack_dict):
                 except KeyboardInterrupt:
                     print()
                     processException = True
-                    warnMsg = "user aborted during dictionary-based attack phase (Ctrl+C was pressed)"
+                    warnMsg = "ação abortada pelo o usuário (Ctrl+C foi pressionada)"
                     logger.warn(warnMsg)
 
                 finally:
@@ -1209,7 +1209,7 @@ def dictionaryAttack(attack_dict):
 
                     if suffix:
                         clearConsoleLine()
-                        infoMsg = "using suffix '%s'" % suffix
+                        infoMsg = "usando sufixos '%s'" % suffix
                         logger.info(infoMsg)
 
                     retVal = None
@@ -1218,7 +1218,7 @@ def dictionaryAttack(attack_dict):
                     try:
                         if _multiprocessing:
                             if _multiprocessing.cpu_count() > 1:
-                                infoMsg = "starting %d processes " % _multiprocessing.cpu_count()
+                                infoMsg = "iniciando processos %d " % _multiprocessing.cpu_count()
                                 singleTimeLogMessage(infoMsg)
 
                             gc.disable()
@@ -1259,7 +1259,7 @@ def dictionaryAttack(attack_dict):
                     except KeyboardInterrupt:
                         print()
                         processException = True
-                        warnMsg = "user aborted during dictionary-based attack phase (Ctrl+C was pressed)"
+                        warnMsg = "ação abortada pelo o usuário (Ctrl+C foi pressionada)"
                         logger.warn(warnMsg)
 
                         for process in processes:
@@ -1277,11 +1277,11 @@ def dictionaryAttack(attack_dict):
     results.extend(resumes)
 
     if foundHash and len(hash_regexes) == 0:
-        warnMsg = "unknown hash format"
+        warnMsg = "formato de hash não reconhecido"
         logger.warn(warnMsg)
 
     if len(results) == 0:
-        warnMsg = "no clear password(s) found"
+        warnMsg = "nenhuma senha limpa encontrada"
         logger.warn(warnMsg)
 
     return results

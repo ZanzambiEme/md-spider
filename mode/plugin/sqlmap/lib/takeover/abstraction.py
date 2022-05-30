@@ -59,7 +59,7 @@ class Abstraction(Web, UDF, XP_cmdshell):
             self.xpCmdshellExecCmd(cmd, silent=silent)
 
         else:
-            errMsg = "Feature not yet implemented for the back-end DBMS"
+            errMsg = "Aspectos não emplementados ainnda no sistema operacional do SGBD"
             raise SqlmapUnsupportedFeatureException(errMsg)
 
     def evalCmd(self, cmd, first=None, last=None):
@@ -78,7 +78,7 @@ class Abstraction(Web, UDF, XP_cmdshell):
             retVal = self.xpCmdshellEvalCmd(cmd, first, last)
 
         else:
-            errMsg = "Feature not yet implemented for the back-end DBMS"
+            errMsg = "Aspectos não emplementados ainnda no sistema operacional do SGBD"
             raise SqlmapUnsupportedFeatureException(errMsg)
 
         return safechardecode(retVal)
@@ -87,8 +87,8 @@ class Abstraction(Web, UDF, XP_cmdshell):
         choice = None
 
         if not self.alwaysRetrieveCmdOutput:
-            message = "do you want to retrieve the command standard "
-            message += "output? [Y/n/a] "
+            message = " Deseas executar o comando"
+            message += "usando a saida padrão? [Y/n/a] "
             choice = readInput(message, default='Y').upper()
 
             if choice == 'A':
@@ -106,8 +106,8 @@ class Abstraction(Web, UDF, XP_cmdshell):
 
     def shell(self):
         if self.webBackdoorUrl and (not isStackingAvailable() or kb.udfFail):
-            infoMsg = "calling OS shell. To quit type "
-            infoMsg += "'x' or 'q' and press ENTER"
+            infoMsg = "abrindo shell reverso. Para sair clique "
+            infoMsg += "'x' ou 'q' e pressione ENTER"
             logger.info(infoMsg)
 
         else:
@@ -131,8 +131,8 @@ class Abstraction(Web, UDF, XP_cmdshell):
                 errMsg = "feature not yet implemented for the back-end DBMS"
                 raise SqlmapUnsupportedFeatureException(errMsg)
 
-            infoMsg = "calling %s OS shell. To quit type " % (Backend.getOs() or "Windows")
-            infoMsg += "'x' or 'q' and press ENTER"
+            infoMsg = "chamando o shell %s. Para sair clique " % (Backend.getOs() or "Windows")
+            infoMsg += "'x' ou 'q' e pressione ENTER"
             logger.info(infoMsg)
 
         autoCompletion(AUTOCOMPLETE_TYPE.OS, OS.WINDOWS if Backend.isOs(OS.WINDOWS) else OS.LINUX)
@@ -145,7 +145,7 @@ class Abstraction(Web, UDF, XP_cmdshell):
                 command = getUnicode(command, encoding=sys.stdin.encoding)
             except KeyboardInterrupt:
                 print()
-                errMsg = "user aborted"
+                errMsg = "usuário abortou"
                 logger.error(errMsg)
             except EOFError:
                 print()

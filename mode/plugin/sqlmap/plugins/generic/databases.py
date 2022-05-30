@@ -72,7 +72,7 @@ class Databases(object):
         kb.data.cachedStatements = []
 
     def getCurrentDb(self):
-        infoMsg = "fetching current database"
+        infoMsg = "Buscando banco de dados actual"
         logger.info(infoMsg)
 
         query = queries[Backend.getIdentifiedDbms()].current_db.query

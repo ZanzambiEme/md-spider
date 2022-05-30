@@ -520,7 +520,7 @@ def _resumeDBMS():
                 Backend.setDbms(dbms)
                 Backend.setVersionList(dbmsVersion)
     else:
-        infoMsg = "resuming back-end DBMS '%s' " % dbms
+        infoMsg = "SGBD resumido de sessões anteriores '%s' " % dbms
         logger.info(infoMsg)
 
         Backend.setDbms(dbms)
@@ -539,7 +539,7 @@ def _resumeOS():
     os = value
 
     if os and os != 'None':
-        infoMsg = "resuming back-end DBMS operating system '%s' " % os
+        infoMsg = "restaurando o sistema operacional do SGBD '%s' " % os
         logger.info(infoMsg)
 
         if conf.os and conf.os.lower() != os.lower():

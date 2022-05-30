@@ -61,9 +61,9 @@ def errorMessages():
     return  print(color.red+"[",datetime.now(),"]", end='')
     
 def checkPythonVersion():
-    version = os.popen("python --version").read()
-    version = version.split(' ')
-    if str(PYTHON_VERSION) in  version[1]:
+    import sys
+    PYVERSION = sys.version.split()[0]
+    if PYVERSION >= "3.9.12":
         pass
     else:
         print(color.red+"[!][", datetime.now(),"]  Erro: versão de python incopatível, o Web Spider só pode ser executado  em versões IGUAL ou MAIOR que 3."+color.end)
