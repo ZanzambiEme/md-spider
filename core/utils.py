@@ -116,7 +116,6 @@ def formEnum(form):
             pass
     return user_option
 
-
 def arrayForm(form_array):
     validation_page = {}
     form_quant = -1;
@@ -126,4 +125,3 @@ def arrayForm(form_array):
         #   validation_page[form_perc.attrs['action']]        
         form_array[form_quant] = form_perc
     return form_array
-            

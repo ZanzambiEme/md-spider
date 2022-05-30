@@ -143,9 +143,9 @@ def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_
                                     #################################################################################
                                 exitTheProgram()
                             else:
+                                from mode.plugin.alien import alien
+                                alien(_shell, _dump_tables, _dump_all, target_url)
                                 
-                                ### ver muito bem essa parte
-                                print(color.info_1+color.red_0+color.info_2+"[", datetime.now(),"]"+color.orange+"  Aviso: SGBD não encontrada, o alvo deve estar sendo protegido por mecanismos de segurança, tal como WAF."+color.end, end='')
                         except FileNotFoundError as e:
                             e = str(e)
                             print(color.red+"[!][", datetime.now(),"]  Erro: arquivo ", e[38:], " não foi encontrado"+color.end)
