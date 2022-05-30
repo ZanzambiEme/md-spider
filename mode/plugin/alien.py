@@ -7,10 +7,8 @@ from core.utils import exitTheProgram
 
 def alien(_shell, _dump_tables, _dump_all, target_url):
     if not _shell and not _dump_tables and not _dump_all:
-        ####################################################
-        from mode.plugin.tablesEnum import simpleTest      #
-        simpleTest(target_url)                             #
-        ####################################################
+        from mode.plugin.tablesEnum import simpleTest      
+        simpleTest(target_url)                             
     else:
         pass
     if _shell:

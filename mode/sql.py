@@ -198,7 +198,6 @@ def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_
                     succed_payloads = []
                     
                     url_exploded = urlExplode(target_url)
-                    ## percorre o objecto Soup do formulário, guardando ele no array_form com índices inteiros
                     for form_perc in forms:
                         form_quant += 1
                         if 'action' in form_perc.attrs:
