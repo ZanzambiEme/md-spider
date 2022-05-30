@@ -77,7 +77,7 @@ def checkURLIntegrity(url):
         print(color.red+"[!][", datetime.now() ,"]  Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o  Web master."+color.end)
         exitTheProgram()
     if req.status_code == 404:
-        print(color.red+"[!][", datetime.now(),"]   Erro: não foi possíveel verificar a integridade do alvo..."+color.end)
+        print(color.red+"[!][", datetime.now(),"]   Erro: não foi possível verificar a integridade do alvo..."+color.end)
         exitTheProgram()
     else:
         print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Alvo intégro")
