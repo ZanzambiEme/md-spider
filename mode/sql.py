@@ -3,7 +3,7 @@
 from asyncore import read
 from datetime import datetime
 
-from responses import target
+#from responses import target
 from core.config import INITIAL_COUNT_VALUE, INITIAL_FORM_COUNT_VALUE, TARGET_VULNERABLE
 
 
@@ -266,6 +266,7 @@ def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_
                                     print("\t Título: MYSQLi BYPASS AUTH BOOLEAN :: Payload: %s" %succed_payloads_lines, end='')
                                     for index, value in input_dic.items():
                                         print("\t Variávei url: %s"%index)
+                                print(color.cian+"Estado:: Alvo Vulnerável")
                                 exitTheProgram()
             except requests.exceptions.RequestException as e:
                 print('\n'+color.red+"[!][", datetime.now(),"]  Erro: alvo Inacessível, verifique a sua ligação à internet ou contacte o Web master."+color.end)
