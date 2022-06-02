@@ -63,7 +63,7 @@ def errorMessages():
 def checkPythonVersion():
     import sys
     PYVERSION = sys.version.split()[0]
-    if PYVERSION >= "3.9.12":
+    if PYVERSION >= "3.9":
         pass
     else:
         print(color.red+"[!][", datetime.now(),"]  Erro: versão de python incopatível, o Web Spider só pode ser executado  em versões IGUAL ou MAIOR que 3."+color.end)
