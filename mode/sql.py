@@ -1,8 +1,5 @@
 # !/usr/bin/env python3
-## começar por testes de injeção sql baseada no tempo... criar um jit
-from asyncore import read
 from datetime import datetime
-
 #from responses import target
 from core.config import INITIAL_COUNT_VALUE, INITIAL_FORM_COUNT_VALUE, TARGET_VULNERABLE
 
@@ -20,15 +17,13 @@ def _sqlInjection(target_url, response, _shell, _dump_tables, _dump_all, bypass_
             from core import colors as color
             from core.utils import avaregeTime
             from core.config import AVARAGE_TIME_BASED_SQLI
-            from core.config import DEFAULT_SQLI_TIME_BASED_TIME
+            #from core.config import DEFAULT_SQLI_TIME_BASED_TIME
             from bs4 import BeautifulSoup
             from core.utils import urlExplode
             from core.utils import exitTheProgram
             from mode.plugin.dbfingerprint import _dbFingerprint
             from mode.plugin.dbfingerprint import _serverVersion
             from mode.plugin.dbfingerprint import _getDatabaseNameU
-
-
             import re
             import requests
             

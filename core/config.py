@@ -32,4 +32,16 @@ GET_TABLES_NAMES = "(SELECT+group_concat(table_name)+from+information_schema.tab
 GET_CURRENT_USER = "(SELECT+CURRENT_USER)"
 OS = ['ubuntu', 'kali', 'windows', 'macos', 'oracle solaris', 'fedora','susi', 'red hat' ]
 MYSQL_SERVER_VERSIONS = ['8.0.28', '8.0.22', '8.0.30', '8.0.29', '8.0.27', '8.0.26', '8.0.25', '8.0.21' ]
+NEW_FORM_PARAMETERS = '''
+<form">
+<fieldset>
+<legend>Login</legend>
+<p></p><div class="alert-box alert">Wrong user name or password.<a href="" class="close">×</a></div><p></p>
+<p>Username: <input type="text" name="username" id="username" size="25" value="sdadasdas"></p>
+<p>Password: <input type="password" name="passwd" id="passwd" size="25" value="sdadasdas"></p>
+<p><input type="submit" class="small button" name="submit" id="submit" value="Submit"><br></p>
+</fieldset>
+</form>
+'''
+
 

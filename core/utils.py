@@ -1,16 +1,11 @@
 # !/usr/bin/env python3
 from core import colors as color
 from datetime import datetime
-
 import requests
 import logging
 import re
 import os
-
-
 from core.config import INITIAL_COUNT_VALUE, PYTHON_VERSION
-
-
 def logginStore():
     try:
         import core.colors as color
@@ -87,7 +82,6 @@ def formEnum(form):
     form_quant = -1
     array_form = {}
     validation_page = {} 
-    
     for form_perc in form:
         form_quant += 1
         if 'action' in form_perc.attrs:
