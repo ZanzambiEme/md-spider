@@ -4,6 +4,7 @@ HANDLE AL WEB SPIDER MESSAGES
 '''
 
 from pendulum import datetime
+from pytest import param
 from core import colors as color
 from datetime import datetime
 from core.utils import exitTheProgram
@@ -28,7 +29,8 @@ def stableConnection():
     print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Conexão estável ")
 def formEnum():
     print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Enumerando formulários..."+color.end)
-    
+def httpVariable(sms):
+     print("\t   Variável url: %s" %sms)
 def noFormFound():
     print(color.orange+"[!][", datetime.now() ,"]  Aviso:  O alvo  não contêm campos onde se possa introduzir dados..."+color.end)
 def inputFiltering(position):
@@ -78,7 +80,43 @@ def dnsError(target):
 def noTargetFound():
     print(color.red+"[!][", datetime.now() ,"]  Erro: Sem alvo passado, execute" +color.cian+ " [compilador] spider [-h] " +color.red+  "para ver as opões a usar com o spider"+color.end) 
     exitTheProgram()
-    
+'''hanle bs4 messages '''
+def bs4(parameter):
+    print(color.falta+"["+color.admin_side, datetime.now(), color.end+"] %s"%parameter);
+def targetRepport(lines):
+    print("...................................................................................................")
+    print("\t O Web spider encontrou os seguintes pontos vulneráveis no alvo:")
+    print("\t   Título: XSS :: Payload: %s"%lines)
 '''Handle sqli messages...'''
-def sqli():
-    return
+def checkURLVariables():
+    print("["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Procurando por variáveis URL...", end='')
+def fingerprintDatabase(parameter):
+    if parameter =="colunas":
+        print("\n["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando "+color.cian+" MYSQLi inferencial(CEGA) ORDER QUERY TECHNIQUE, pode levar alguns minutos..."+color.end)
+    if parameter == "server":
+        print("["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando "+color.cian+" MYSQLi inferencial(CEGA) FINGERPRINT TECHINQUE, pode levar alguns minutos..."+color.end)
+    if parameter == "database":
+        print("["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Testando "+color.cian+" MYSQLi inferencial(CEGA) DATABASE USER FINGERPRINT TECHINQUE..."+color.end)
+    if parameter == "SGBD":
+        print("["+color.green+"~"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Identificando o SGBD com "+color.cian+" SQLI INFERENCIAL(CEGA)"+color.end)
+    if parameter == "status":
+        print("\tSGBD alvo: MYSQL")   
+        print(color.admin_side+"\t[Estado]::Alvo vulnerável:"+color.end)   
+    if parameter == "id not found":
+          print("\n"+color.info_1+color.red_0+color.info_2+"[", datetime.now(),"]  Aviso: variáveis URL não encontrado. Será usada campos inputs..."+color.end)
+          print("["+color.green+"+"+color.end+"]["+color.admin_side, datetime.now(), color.end+"]  Enumerando formulários..."+color.end)
+def sqliRepport(SGBD, SO, DB_USER, DB_NAME):
+    print("\tVersão do SGBD: %s" %SGBD)
+    print("\tSistema backend (OS) do SGBD: %s" %SO)
+    print("\tNome do usuário do banco de dados: %s" %DB_USER)
+    print("\tNome do banco de dados: %s" %DB_NAME)
+    print(color.admin_side+"\t[Estado]::Alvo vulnerável"+color.end)  
+def info(parameter):
+    if parameter == "1":
+        print(color.info_1+color.red_0+color.info_2+"[", datetime.now(),"]  Aviso: complementando o parâmetro -auth_bypass"+color.end)
+    if parameter == "2":
+        print(color.info_1+color.red_0+color.info_2+"[", datetime.now(),"]  Aviso: este parâmetro requer a flag -r/--response, reexecute juntamente com ele"+color.end)
+        exitTheProgram()
+    if parameter == "3":
+        print(color.orange+"[!][", datetime.now() ,"]  Aviso:  O alvo  não contêm campos onde se possa introduzir dados..."+color.end)  
+        exitTheProgram()

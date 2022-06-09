@@ -11,11 +11,11 @@ import argparse
 
 def commandLineArguments():
             parse = argparse.ArgumentParser(description='Detetor de Vulnerabilidades web', prog='spider', epilog='CopyRight Spider Developers')
-            parse.add_argument('-u', '--url', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1- para alvos injeção sql', dest='target') 
+            parse.add_argument('-u', '--url', metavar='', help='alvo e.g. http://www.site.com/vuln.php ou http://www.site.com/vuln.php?id=1- para alvos injeção sql', dest='target')
             #parse.add_argument('-d', '--data', metavar='', help='Payloads a serem enviados. (eg: "id=1")', dest='payload')
-            # parse.add_argument('-p', '--port', metavar='', help='Porta do servidor proxy eg: python3 spider -u alvo -sql --proxy 0.0.0.0 -p 8080)', dest='proxy_port')
-            # parse.add_argument('-P', '--proxy', metavar='', help='Servidor proxy (eg: python3 spider -u alvo -sql --proxy 0.0.0.0)', dest='proxy_server')
-            # parse.add_argument('-c', '--cookie', metavar='', help='Cookies de sessão http a serem usados (e.g: python3 spider -u alvo -sql --proxy 0.0.0.0 -p 8080 -c a8d127e...)', dest='cookie')
+            #parse.add_argument('-p', '--port', metavar='', help='Porta do servidor proxy eg: python3 spider -u alvo -sql --proxy 0.0.0.0 -p 8080)', dest='proxy_port')
+            #parse.add_argument('-P', '--proxy', metavar='', help='Servidor proxy (eg: python3 spider -u alvo -sql --proxy 0.0.0.0)', dest='proxy_server')
+            #parse.add_argument('-c', '--cookie', metavar='', help='Cookies de sessão http a serem usados (e.g: python3 spider -u alvo -sql --proxy 0.0.0.0 -p 8080 -c a8d127e...)', dest='cookie')
             parse.add_argument('-t', '--timeout', metavar='', help='Define o tempo da requisição (e.g: python3 spider -u alvo -t 4 -sql -- proxy 0.0.0.0 -p 8080 -c a8d127e...)', dest='timeout')
             parse.add_argument('-r', '--response', metavar='',  help='Interação da página em relação aos dados do login inseridos. (python3 spider -u alvo -sql --response "usuario ou login inválido")', dest='response')
             parse.add_argument('-v', '--verbose', help='Habilita o modo Verbose, mostrando processos a serem executados em background', action='store_true') 
@@ -42,7 +42,7 @@ def commandLineArguments():
             other.add_argument('--laravel', help='Verificar versões vulneráveis no Laravel no alvo', action='store_true', dest='laravel')
             other.add_argument('--nodeJs', help='Verificar versões vulneráveis no Laravel no alvo nodeJs no alvo passado', action='store_true', dest='nodejs')
             args    = parse.parse_args()
-           #PAYLOADS  = args.payload
+            #PAYLOADS  = args.payload
             TIMOUT    = args.timeout
             VERBOSE   = args.verbose
             RESPONSE  = args.response
@@ -51,7 +51,7 @@ def commandLineArguments():
             AUTH_BYPASS = args.auth_bypass
             SPIDER_LOG = args.log
             SPIDER_LOGJ = args.logj
-           #COOKIE    = args.cookie
+            #COOKIE    = args.cookie
             #TAMPER    = args.tamper
             SHELL     = args.shell
             HTTP_ENUMERATION = args.http_enum
@@ -65,12 +65,10 @@ def commandLineArguments():
             XSS              = args.xss
             #SH_INJECTION     = args.sh
             MASS_ACTACK      = args.ma
-            #########################################
-            JQUERY      = args.jquery               #
-            WORDPRESS   = args.wordpress            #
-            LARAVEL     = args.laravel              #
-            NODEJS      = args.nodejs               #
-            #########################################
+            JQUERY      = args.jquery               
+            WORDPRESS   = args.wordpress            
+            LARAVEL     = args.laravel              
+            NODEJS      = args.nodejs               
             if SPIDER_LOG:
                 import os
                 os.system("nano ./logs/WebSpider.log")

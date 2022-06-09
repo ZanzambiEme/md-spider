@@ -14,12 +14,14 @@ try:
     try:
         from bs4 import BeautifulSoup
     except ImportError as e:
-        print(color.falta+"["+color.admin_side, datetime.now(), color.end+"] BeautifullSoup não está instalada...");
-        print(color.info+"["+color.admin_side, datetime.now(), color.end+"] Instalando o módulo BeautifullSoup...")
+        from mode.plugin.models import bs4
+        bs4(parameter=" BeautifullSoup não está instalada...")
+        bs4(parameter=" Instalando o módulo BeautifullSoup...")
         import os       #
         os.system("sudpo apt-get install python3-bs4 | pip install beautifulsoup4")
-        print(color.info+"["+color.admin_side, datetime.now(), color.end+"] BeautifullSoup instalado")
-        quit()
+        bs4(parameter=" BeautifullSoup instalado")
+        pass
+    ''' handle xss test'''
     def _xss(url, timeout, verbose, http_enumeration):
         try:
             request_timeout = config.REQUEST_TIMEOUT
@@ -133,12 +135,12 @@ try:
                                                 endInjection()
                                                 if config.TARGET_VULNERABLE:
                                                     targetStatus(status="Alvo Vulnerável a XSS...", statusColor="admin_color")
-                                                    print("...................................................................................................")
-                                                    print("\t O Web spider encontrou os seguintes pontos vulneráveis no alvo:")
-                                                    print("\t   Título: XSS :: Payload: %s"%lines)
+                                                    from mode.plugin.models import targetRepport
+                                                    targetRepport(lines=lines)
                                                     for index, value in input_dic.items():
                                                         if value == lines:
-                                                            print("\t   Variável url: %s" %index)
+                                                            from mode.plugin.models import httpVariable
+                                                            httpVariable(sms=index)
                                                             exitTheProgram()
                                                 else:
                                                     targetStatus(status="Alvo Não Vulnerável a XSS", statusColor="red")
