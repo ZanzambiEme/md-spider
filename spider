@@ -1,7 +1,5 @@
 # !/usr/bin/env python3
-'''
-WEB SPIDER MAIN FUNCTION.....
-'''
+''''''
 try:
     from datetime import datetime
     import core.colors as color

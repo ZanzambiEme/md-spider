@@ -120,3 +120,5 @@ def info(parameter):
     if parameter == "3":
         print(color.orange+"[!][", datetime.now() ,"]  Aviso:  O alvo  não contêm campos onde se possa introduzir dados..."+color.end)  
         exitTheProgram()
+def beefMessages():
+    print("This is Beef speaking! .... hello!")

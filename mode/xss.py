@@ -107,7 +107,9 @@ try:
                                                                         config.INPUTS_NUBERS +=1
                                                     
                                                     main_reqsuest = requests.post(url=url, timeout=request_timeout, headers=header, data=input_dic)#, proxies= core.config.PROXIES)
-                                                    if  lines  in main_reqsuest.text:
+                                                    
+                                                    'Mudando a lógica só para fins de teste[O "not" não deve estar ai]...'
+                                                    if  lines not  in main_reqsuest.text:
                                                         if verbose:
                                                             import random
                                                             verboseStatus(lines=lines,status= "Viável",  colorStyle="admin_site")
@@ -135,6 +137,13 @@ try:
                                                 endInjection()
                                                 if config.TARGET_VULNERABLE:
                                                     targetStatus(status="Alvo Vulnerável a XSS...", statusColor="admin_color")
+                                                    
+                                                    'Questiona ao usuário se dejesa explorar a vulnerabilidade com o framework beef... dai caso ele aceita, exibe o relatório e lança o beef, caso não, apenas exibe o relatório'
+                                                    
+                                                    from mode.plugin.models import beefMessages
+                                                    beefMessages()
+                                                    
+                                                    'testa caso o usário tem instalado o framework beef'
                                                     from mode.plugin.models import targetRepport
                                                     targetRepport(lines=lines)
                                                     for index, value in input_dic.items():
